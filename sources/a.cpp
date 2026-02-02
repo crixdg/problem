@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <cmath>
 using namespace std;
 
 vector<int> tr;
@@ -9,7 +10,77 @@ void update(int n, int i, bool isInsert) {
     }
 }
 
-int queryMaxSmaller(int n, int l, int r) {}
+int queryMaxSmaller(int n, int l, int r) {
+    int ans = INT_MIN;
+    for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+        if (!(r & 1)) {
+            if (tr[r] > 0) {
+                int v = r;
+                while (v < n) {
+                    if (tr[v * 2 + 1] > 0) {
+                        v = v * 2 + 1;
+                    } else {
+                        v = v * 2;
+                    }
+                }
+                return v - n;
+            }
+            r--;
+        }
+        if (l & 1) {
+            if (tr[l] > 0) {
+                int v = l;
+                while (l < n) {
+                    if (tr[v * 2 + 1] > 0) {
+                        v = v * 2 + 1;
+                    } else {
+                        v = v * 2;
+                    }
+                }
+                ans = max(ans, v - n);
+            }
+            l++;
+        }
+    }
+    if (ans == INT_MIN) { return -1; }
+    return ans;
+}
+
+int queryMinGreater(int n, int l, int r) {
+    int ans = INT_MAX;
+    for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+        if (l & 1) {
+            if (tr[l] > 0) {
+                int v = l;
+                while (l < n) {
+                    if (tr[v * 2 + 1] > 0) {
+                        v = v * 2 + 1;
+                    } else {
+                        v = v * 2;
+                    }
+                }
+                return v - n;
+            }
+            l++;
+        }
+        if (!(r & 1)) {
+            if (tr[r] > 0) {
+                int v = r;
+                while (v < n) {
+                    if (tr[v * 2 + 1] > 0) {
+                        v = v * 2 + 1;
+                    } else {
+                        v = v * 2;
+                    }
+                }
+                ans = min(ans, v - n);
+            }
+            r--;
+        }
+    }
+    if (ans == INT_MAX) { return -1; }
+    return ans;
+}
 
 int main() {
     int n, q;
@@ -41,15 +112,11 @@ int main() {
             break;
         }
         case 3: {
-            int l = k, r = n - 1;
-            int ans = INT_MIN;
-            for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
-                if (l & 1) {}
-            }
+            cout << queryMinGreater(n, k, n - 1) << '\n';
             break;
         }
         case 4: {
-            int l = 0, r = k;
+            cout << queryMaxSmaller(n, 0, k) << '\n';
         }
         }
     }
