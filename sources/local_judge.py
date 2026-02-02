@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Local Judge for Library Checker Problems
-Usage: python3 local_judge.py -p aplusb -s solution.cpp
+Usage: python3 local_judge.py -p sample/aplusb -s solution.cpp --repo-path ~/library-checker-problems
 """
 
 import argparse
@@ -26,15 +26,43 @@ def print_colored(text: str, color: str = ''):
     print(f"{color}{text}{Color.RESET}")
 
 def find_problem_path(problem_name: str, repo_path: Path) -> Optional[Path]:
-    """Find the problem directory"""
-    search_dirs = ['sample', 'datastructure', 'graph', 'math', 'string', 'tree',
-                   'convolution', 'polynomial', 'linear_algebra', 'number_theory']
+    """
+    Find the problem directory
+    Accepts formats:
+    - "aplusb" -> searches in common directories
+    - "sample/aplusb" -> uses exact path from repo_path
+    - "/full/path/to/problem" -> uses absolute path
+    """
+
+    # Case 1: Absolute path
+    if problem_name.startswith('/'):
+        path = Path(problem_name)
+        if path.exists() and (path / 'info.toml').exists():
+            return path
+        return None
+
+    # Case 2: Relative path with folder (e.g., "sample/aplusb")
+    if '/' in problem_name:
+        path = repo_path / problem_name
+        if path.exists() and (path / 'info.toml').exists():
+            return path
+        # If not found with the given path, extract just the problem name and search
+        problem_name = problem_name.split('/')[-1]
+
+    # Case 3: Just problem name (e.g., "aplusb") - search in common directories
+    search_dirs = [
+        'sample', 'datastructure', 'graph', 'math', 'string', 'tree',
+        'convolution', 'polynomial', 'linear_algebra', 'number_theory',
+        'data_structure', 'enumerative_combinatorics', 'geo', 'big_integer',
+        'set_power_series', 'other'
+    ]
 
     for dir_name in search_dirs:
         path = repo_path / dir_name / problem_name
         if path.exists() and (path / 'info.toml').exists():
             return path
 
+    # Fallback: search all directories for the problem
     for info_file in repo_path.rglob('info.toml'):
         if info_file.parent.name == problem_name:
             return info_file.parent
@@ -54,18 +82,22 @@ def compile_solution(solution_file: Path, output_binary: Path, verbose: bool = F
         result = subprocess.run(compile_cmd, capture_output=True, text=True, timeout=30)
 
         if result.returncode != 0:
-            print_colored(f"Compilation Error:", Color.RED + Color.BOLD)
+            print_colored(f"❌ Compilation Error:", Color.RED + Color.BOLD)
             print(result.stderr)
             return False
 
-        print_colored(f"Compilation successful!", Color.GREEN)
+        if result.stderr and verbose:
+            print_colored("⚠️  Compiler Warnings:", Color.YELLOW)
+            print(result.stderr)
+
+        print_colored(f"✅ Compilation successful!", Color.GREEN)
         return True
 
     except subprocess.TimeoutExpired:
-        print_colored("Compilation timeout!", Color.RED)
+        print_colored("❌ Compilation timeout!", Color.RED)
         return False
     except FileNotFoundError:
-        print_colored("g++ not found! Install g++.", Color.RED)
+        print_colored("❌ g++ not found! Install g++.", Color.RED)
         return False
 
 def run_test_case(binary: Path, input_file: Path, expected_output_file: Path,
@@ -115,20 +147,20 @@ def run_all_tests(problem_path: Path, solution_binary: Path,
     checker = problem_path / 'checker'
 
     if not in_dir.exists():
-        print_colored("Test cases not found. Run: ./generate.py -p <problem>", Color.RED)
+        print_colored("❌ Test cases not found. Run: ./generate.py -p <problem>", Color.RED)
         return 0, 0
 
     if not checker.exists():
-        print_colored("Checker not found. Run: ./generate.py -p <problem>", Color.RED)
+        print_colored("❌ Checker not found. Run: ./generate.py -p <problem>", Color.RED)
         return 0, 0
 
     input_files = sorted(in_dir.glob('*.in'))
 
     if not input_files:
-        print_colored("No test cases found!", Color.RED)
+        print_colored("❌ No test cases found!", Color.RED)
         return 0, 0
 
-    print_colored(f"\nRunning {len(input_files)} test cases...\n", Color.CYAN + Color.BOLD)
+    print_colored(f"\n🧪 Running {len(input_files)} test cases...\n", Color.CYAN + Color.BOLD)
 
     passed = 0
     total = len(input_files)
@@ -138,7 +170,7 @@ def run_all_tests(problem_path: Path, solution_binary: Path,
         output_file = out_dir / f"{test_name}.out"
 
         if not output_file.exists():
-            print_colored(f"  [{i}/{total}] {test_name}:  SKIP", Color.YELLOW)
+            print_colored(f"  [{i}/{total}] {test_name}: ⚠️  SKIP", Color.YELLOW)
             continue
 
         status, elapsed, message = run_test_case(solution_binary, input_file, output_file,
@@ -165,28 +197,54 @@ def run_all_tests(problem_path: Path, solution_binary: Path,
     return passed, total
 
 def main():
-    parser = argparse.ArgumentParser(description='Local Judge for Library Checker')
-    parser.add_argument('-p', '--problem', required=True, help='Problem name')
-    parser.add_argument('-s', '--solution', required=True, type=Path, help='Solution file')
-    parser.add_argument('--repo-path', type=Path, default=Path.cwd(), help='Repo path')
-    parser.add_argument('--time-limit', type=float, default=5.0, help='Time limit')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose')
+    parser = argparse.ArgumentParser(
+        description='Local Judge for Library Checker',
+        epilog='''
+Examples:
+  # From within library-checker-problems directory:
+  python3 local_judge.py -p sample/aplusb -s solution.cpp
+  python3 local_judge.py -p aplusb -s solution.cpp
+
+  # From outside the directory:
+  python3 local_judge.py -p sample/aplusb -s solution.cpp --repo-path ~/library-checker-problems
+  python3 local_judge.py -p datastructure/unionfind -s uf.cpp --repo-path /path/to/repo
+        ''',
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+
+    parser.add_argument('-p', '--problem', required=True,
+                       help='Problem path (e.g., "sample/aplusb" or just "aplusb")')
+    parser.add_argument('-s', '--solution', required=True, type=Path,
+                       help='Solution file path')
+    parser.add_argument('--repo-path', type=Path, default=Path.cwd(),
+                       help='Path to library-checker-problems repository (default: current directory)')
+    parser.add_argument('--time-limit', type=float, default=5.0,
+                       help='Time limit in seconds (default: 5.0)')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                       help='Verbose output')
 
     args = parser.parse_args()
 
     if not args.solution.exists():
-        print_colored(f"Solution not found: {args.solution}", Color.RED)
+        print_colored(f"❌ Solution not found: {args.solution}", Color.RED)
         sys.exit(1)
 
-    print_colored(f"Looking for problem: {args.problem}", Color.CYAN)
+    print_colored(f"🔍 Looking for problem: {args.problem}", Color.CYAN)
+    print_colored(f"📂 Repository path: {args.repo_path}", Color.BLUE)
+
     problem_path = find_problem_path(args.problem, args.repo_path)
 
     if not problem_path:
-        print_colored(f"Problem '{args.problem}' not found!", Color.RED)
+        print_colored(f"❌ Problem '{args.problem}' not found!", Color.RED)
+        print_colored(f"   Searched in: {args.repo_path}", Color.YELLOW)
+        print_colored(f"\n💡 Tips:", Color.CYAN)
+        print_colored(f"   - Use format: sample/aplusb or datastructure/unionfind", Color.YELLOW)
+        print_colored(f"   - Or just: aplusb (will search automatically)", Color.YELLOW)
+        print_colored(f"   - Make sure --repo-path points to library-checker-problems", Color.YELLOW)
         sys.exit(1)
 
-    print_colored(f"Found: {problem_path.relative_to(args.repo_path)}", Color.GREEN)
-    print_colored(f" Time limit: {args.time_limit}s", Color.CYAN)
+    print_colored(f"✓ Found: {problem_path}", Color.GREEN)
+    print_colored(f"⏱  Time limit: {args.time_limit}s", Color.CYAN)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         solution_binary = Path(tmpdir) / 'solution'
@@ -200,10 +258,10 @@ def main():
     print_colored("=" * 60, Color.CYAN)
 
     if passed == total:
-        print_colored(f"All tests passed! ({passed}/{total})", Color.GREEN + Color.BOLD)
+        print_colored(f"🎉 All tests passed! ({passed}/{total})", Color.GREEN + Color.BOLD)
         sys.exit(0)
     else:
-        print_colored(f"{total - passed} failed. ({passed}/{total} passed)", Color.RED + Color.BOLD)
+        print_colored(f"❌ {total - passed} failed. ({passed}/{total} passed)", Color.RED + Color.BOLD)
         sys.exit(1)
 
 if __name__ == '__main__':
