@@ -1,32 +1,39 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+vector<int> tr;
+
+void update(int n, int i, bool isInsert) {
+    for (i += n, tr[i] = isInsert; i > 1; i >>= 1) {
+        tr[i >> 1] = tr[i] + tr[i ^ 1];
+    }
+}
+
+int queryMaxSmaller(int n, int l, int r) {}
+
 int main() {
     int n, q;
     cin >> n >> q;
-    set<int> st;
     string T;
     cin >> T;
+
+    tr.assign(2 * n, 0);
     for (int i = 0; i < T.size(); i++) {
-        if (T[i] == '1') { st.insert(i); }
+        if (T[i] == '1') { update(n, i, 1); }
     }
     while (q--) {
-        int op;
-        cin >> op;
-        int k;
-        cin >> k;
+        int op, k;
+        cin >> op >> k;
         switch (op) {
         case 0:
-            st.insert(k);
+            update(n, k, 1);
             break;
         case 1: {
-            auto it = st.find(k);
-            if (it != st.end()) { st.erase(it); }
+            update(n, k, 0);
             break;
         }
         case 2: {
-            auto it = st.find(k);
-            if (it != st.end()) {
+            if (tr[k + n]) {
                 cout << 1 << '\n';
             } else {
                 cout << 0 << '\n';
@@ -34,25 +41,15 @@ int main() {
             break;
         }
         case 3: {
-            auto it = st.upper_bound(k - 1);
-            if (it == st.end()) {
-                cout << -1 << '\n';
-            } else {
-                cout << *it << '\n';
+            int l = k, r = n - 1;
+            int ans = INT_MIN;
+            for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+                if (l & 1) {}
             }
             break;
         }
         case 4: {
-            auto it = st.lower_bound(k);
-            if (it == st.end()) {
-                cout << -1 << '\n';
-            } else if (*it == k) {
-                cout << k << '\n';
-            } else if (it == st.begin()) {
-                cout << -1 << '\n';
-            } else {
-                cout << *(--it) << '\n';
-            }
+            int l = 0, r = k;
         }
         }
     }
