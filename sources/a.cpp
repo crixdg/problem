@@ -2,6 +2,7 @@
 using namespace std;
 
 int main() {
+    cin.tie(nullptr);
     int n, q;
     cin >> n >> q;
     vector<long long> ps(n + 1);
