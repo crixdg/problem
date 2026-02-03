@@ -1,47 +1,70 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<long long> tr;
-
-void update(int n, int i, int val) {
-    for (i += n, tr[i] += val; i > 1; i >>= 1) {
-        tr[i >> 1] = tr[i] + tr[i ^ 1];
-    }
-}
-
-long long query(int n, int l, int r) {
-    long long ans = 0;
-    for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
-        if (l & 1) { ans += tr[l++]; }
-        if (!(r & 1)) { ans += tr[r--]; }
-    }
-    return ans;
-}
-
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
+    int mod = 998244353;
+
     int n, q;
     cin >> n >> q;
-    tr.resize(2 * n);
+    vector<pair<long long, long long>> pr(2 * n);
+    for (int i = 0; i < n; i++) { cin >> pr[i + n].first >> pr[i + n].second; }
     for (int i = 0; i < n; i++) {
-        int d;
-        cin >> d;
-        update(n, i, d);
+        int j = i + n;
+        for (; j > 1; j >>= 1) {
+            if (j & 1) {
+                pr[j >> 1].second =
+                        (pr[j].first * pr[j ^ 1].second + pr[j].second) % mod;
+            } else {
+                pr[j >> 1].second =
+                        (pr[j ^ 1].first * pr[j].second + pr[j ^ 1].second) %
+                        mod;
+            }
+            pr[j >> 1].first = (pr[j].first * pr[j ^ 1].first) % mod;
+        }
     }
-    while (q--) {
 
+    while (q--) {
         int op;
         cin >> op;
         if (op == 0) {
-            int p, x;
-            cin >> p >> x;
-            update(n, p, x);
+            int i, c, d;
+            cin >> i >> c >> d;
+            int j = i + n;
+            pr[j] = {c, d};
+            for (; j > 1; j >>= 1) {
+                if (j & 1) {
+                    pr[j >> 1].second =
+                            (pr[j].first * pr[j ^ 1].second + pr[j].second) %
+                            mod;
+                } else {
+                    pr[j >> 1].second = (pr[j ^ 1].first * pr[j].second +
+                                         pr[j ^ 1].second) %
+                                        mod;
+                }
+                pr[j >> 1].first = (pr[j].first * pr[j ^ 1].first) % mod;
+            }
         } else {
             int l, r;
-            cin >> l >> r;
-            cout << query(n, l, r - 1) << '\n';
+            long long x;
+            cin >> l >> r >> x;
+            r--;
+            long long a = 1;
+            long long b = 0;
+            for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+                if (l & 1) {
+                    x = (pr[l].first * x + pr[l].second) % mod;
+                    l++;
+                }
+                if (!(r & 1)) {
+                    b = (a * pr[r].second + b) % mod;
+                    a = (a * pr[r].first) % mod;
+                    r--;
+                }
+            }
+            cout << (a * x + b) % mod << '\n';
         }
     }
 }
