@@ -3,26 +3,29 @@ using namespace std;
 
 int n, m;
 vector<vector<pair<int, int>>> adj;
-vector<int> color;
-deque<int> stk;
+vector<bool> vis;
 vector<int> pos;
+deque<pair<int, int>> stk;
 
-bool dfs(int u) {
-    color[u] = 1;
+bool dfs(int u, int ue) {
+    vis[u] = true;
     pos[u] = stk.size();
     for (auto [v, e] : adj[u]) {
-        stk.push_back(e);
-        if (color[v] == 0) {
-            if (dfs(v)) { return true; }
-        } else if (color[v] == 1) {
+        if (ue == e) { continue; }
+        stk.push_back({u, e});
+        if (!vis[v]) {
+            if (dfs(v, e)) { return true; }
+        } else {
             stk.erase(begin(stk), begin(stk) + pos[v]);
             cout << stk.size() << '\n';
-            for (int d : stk) { cout << d << '\n'; }
+            for (auto [d, _] : stk) { cout << d << ' '; }
+            cout << '\n';
+            for (auto [_, d] : stk) { cout << d << ' '; }
+            cout << '\n';
             return true;
         }
         stk.pop_back();
     }
-    color[u] = 2;
     pos[u] = 0;
     return false;
 }
@@ -37,12 +40,13 @@ int main() {
         int u, v;
         cin >> u >> v;
         adj[u].push_back({v, i});
+        adj[v].push_back({u, i});
     }
 
-    color.resize(n);
+    vis.resize(n);
     pos.resize(n);
     for (int i = 0; i < n; i++) {
-        if (color[i] == 0 && dfs(i)) { return 0; }
+        if (!vis[i] && dfs(i, -1)) { return 0; }
     }
     cout << -1 << '\n';
     return 0;

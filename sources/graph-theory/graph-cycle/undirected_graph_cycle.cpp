@@ -1,43 +1,39 @@
-// https://judge.yosupo.jp/problem/cycle_detection_undirected
-
 #include <bits/stdc++.h>
 using namespace std;
 
 int n, m;
 vector<vector<pair<int, int>>> adj;
+vector<bool> vis;
+vector<int> pos;
+deque<pair<int, int>> stk;
 
-vector<int> color;
-vector<int> pnode, pedge;
-
-bool dfs(int u, int pe) {
-    color[u] = 1;
-    pnode.push_back(u);
-    pedge.push_back(pe);
-    for (auto &e : adj[u]) {
-        if (e.second == pe) { continue; }
-        if (color[e.first] == 0) {
-            if (dfs(e.first, e.second)) { return true; }
-        } else if (color[e.first] == 1) {
-            int i = 0;
-            for (; i < pnode.size() && pnode[i] != e.first; i++) {}
-            cout << pnode.size() - i << endl;
-            for (int j = i; j < pnode.size(); j++) { cout << pnode[j] << ' '; }
+bool dfs(int u, int ue) {
+    vis[u] = true;
+    pos[u] = stk.size();
+    for (auto [v, e] : adj[u]) {
+        if (ue == e) { continue; }
+        stk.push_back({u, e});
+        if (!vis[v]) {
+            if (dfs(v, e)) { return true; }
+        } else {
+            stk.erase(begin(stk), begin(stk) + pos[v]);
+            cout << stk.size() << '\n';
+            for (auto [d, _] : stk) { cout << d << ' '; }
             cout << '\n';
-            for (int j = i + 1; j < pedge.size(); j++) {
-                cout << pedge[j] << ' ';
-            }
-            cout << e.second << endl;
+            for (auto [_, d] : stk) { cout << d << ' '; }
+            cout << '\n';
             return true;
         }
+        stk.pop_back();
     }
-    pnode.pop_back();
-    pedge.pop_back();
-    color[u] = 2;
+    pos[u] = 0;
     return false;
 }
 
-// Find the list of edges (edge_ids) that forms a graph cycle if exists
 int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
     cin >> n >> m;
     adj.resize(n);
     for (int i = 0; i < m; i++) {
@@ -47,12 +43,11 @@ int main() {
         adj[v].push_back({u, i});
     }
 
-    color.resize(n);
-    for (int u = 0; u < n; u++) {
-        if (color[u] == 0) {
-            if (dfs(u, -1)) { return 0; }
-        }
+    vis.resize(n);
+    pos.resize(n);
+    for (int i = 0; i < n; i++) {
+        if (!vis[i] && dfs(i, -1)) { return 0; }
     }
-    cout << -1 << endl;
+    cout << -1 << '\n';
     return 0;
 }
