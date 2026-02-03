@@ -1,70 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int n, m;
+vector<vector<pair<int, int>>> adj;
+vector<int> color;
+deque<int> stk;
+vector<int> pos;
+
+bool dfs(int u) {
+    color[u] = 1;
+    pos[u] = stk.size();
+    for (auto [v, e] : adj[u]) {
+        stk.push_back(e);
+        if (color[v] == 0) {
+            if (dfs(v)) { return true; }
+        } else if (color[v] == 1) {
+            stk.erase(begin(stk), begin(stk) + pos[v]);
+            cout << stk.size() << '\n';
+            for (int d : stk) { cout << d << '\n'; }
+            return true;
+        }
+        stk.pop_back();
+    }
+    color[u] = 2;
+    pos[u] = 0;
+    return false;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    int mod = 998244353;
+    cin >> n >> m;
+    adj.resize(n);
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back({v, i});
+    }
 
-    int n, q;
-    cin >> n >> q;
-    vector<pair<long long, long long>> pr(2 * n);
-    for (int i = 0; i < n; i++) { cin >> pr[i + n].first >> pr[i + n].second; }
+    color.resize(n);
+    pos.resize(n);
     for (int i = 0; i < n; i++) {
-        int j = i + n;
-        for (; j > 1; j >>= 1) {
-            if (j & 1) {
-                pr[j >> 1].second =
-                        (pr[j].first * pr[j ^ 1].second + pr[j].second) % mod;
-            } else {
-                pr[j >> 1].second =
-                        (pr[j ^ 1].first * pr[j].second + pr[j ^ 1].second) %
-                        mod;
-            }
-            pr[j >> 1].first = (pr[j].first * pr[j ^ 1].first) % mod;
-        }
+        if (color[i] == 0 && dfs(i)) { return 0; }
     }
-
-    while (q--) {
-        int op;
-        cin >> op;
-        if (op == 0) {
-            int i, c, d;
-            cin >> i >> c >> d;
-            int j = i + n;
-            pr[j] = {c, d};
-            for (; j > 1; j >>= 1) {
-                if (j & 1) {
-                    pr[j >> 1].second =
-                            (pr[j].first * pr[j ^ 1].second + pr[j].second) %
-                            mod;
-                } else {
-                    pr[j >> 1].second = (pr[j ^ 1].first * pr[j].second +
-                                         pr[j ^ 1].second) %
-                                        mod;
-                }
-                pr[j >> 1].first = (pr[j].first * pr[j ^ 1].first) % mod;
-            }
-        } else {
-            int l, r;
-            long long x;
-            cin >> l >> r >> x;
-            r--;
-            long long a = 1;
-            long long b = 0;
-            for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
-                if (l & 1) {
-                    x = (pr[l].first * x + pr[l].second) % mod;
-                    l++;
-                }
-                if (!(r & 1)) {
-                    b = (a * pr[r].second + b) % mod;
-                    a = (a * pr[r].first) % mod;
-                    r--;
-                }
-            }
-            cout << (a * x + b) % mod << '\n';
-        }
-    }
+    cout << -1 << '\n';
+    return 0;
 }
