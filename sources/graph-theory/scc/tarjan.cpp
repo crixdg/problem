@@ -1,21 +1,19 @@
-// https://judge.yosupo.jp/problem/scc
-
 #include <bits/stdc++.h>
 using namespace std;
 
 int n, m;
 vector<vector<int>> adj;
-vector<vector<int>> sccs;
 
+int ti;
 vector<int> disc, low;
 vector<bool> vis;
 vector<int> stk;
-int ti = 0;
+vector<vector<int>> sccs;
 
 void dfs(int u) {
     disc[u] = low[u] = ti++;
-    stk.push_back(u);
     vis[u] = true;
+    stk.push_back(u);
 
     for (int v : adj[u]) {
         if (disc[v] == -1) {
@@ -27,19 +25,22 @@ void dfs(int u) {
     }
 
     if (disc[u] == low[u]) {
-        vector<int> tmp;
+        vector<int> scc;
         int v;
         do {
             v = stk.back();
             stk.pop_back();
-            tmp.push_back(v);
-            vis[v] = 0;
+            scc.push_back(v);
+            vis[v] = false;
         } while (v != u);
-        sccs.push_back(tmp);
+        sccs.push_back(scc);
     }
 }
 
 int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
     cin >> n >> m;
     adj.resize(n);
     for (int i = 0; i < m; i++) {
@@ -48,19 +49,18 @@ int main() {
         adj[u].push_back(v);
     }
 
+    ti = 0;
     disc.assign(n, -1);
     low.assign(n, -1);
     vis.resize(n);
-    for (int u = 0; u < n; u++) {
-        if (disc[u] == -1) { dfs(u); }
+    for (int i = 0; i < n; i++) {
+        if (disc[i] == -1) { dfs(i); }
     }
 
-    reverse(begin(sccs), end(sccs));
     cout << sccs.size() << '\n';
-    for (auto &i : sccs) {
-        cout << i.size() << ' ';
-        for (int d : i) { cout << d << ' '; }
+    for (int i = sccs.size() - 1; i >= 0; i--) {
+        cout << sccs[i].size() << ' ';
+        for (int d : sccs[i]) { cout << d << ' '; }
         cout << '\n';
     }
-    cout << flush;
 }
