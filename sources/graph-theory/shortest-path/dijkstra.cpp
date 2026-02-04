@@ -1,27 +1,35 @@
-// Non-negative single source shortest path
-// https://judge.yosupo.jp/problem/shortest_path
-
 #include <bits/stdc++.h>
 using namespace std;
 
 int n, m;
-vector<unordered_map<int, int>> adj;
+vector<vector<pair<int, int>>> adj;
 
-vector<long long> f;
-vector<int> g;
-void shortestPath(int s, int d) {
-    f.assign(n, LLONG_MAX);
-    f[s] = 0;
-    g.assign(n, -1);
-    g[s] = -1;
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    int src, dest;
+    cin >> n >> m;
+    cin >> src >> dest;
+
+    adj.resize(n);
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        adj[a].push_back({b, c});
+    }
 
     using pli = pair<long long, int>;
+    vector<long long> f(n, LLONG_MAX);
+    f[src] = 0;
+    vector<int> g(n, -1);
     priority_queue<pli, vector<pli>, greater<pli>> pq;
-    pq.push({0, s});
+    pq.emplace(0LL, src);
+
     while (!pq.empty()) {
-        auto [pw, u] = pq.top();
+        auto [uw, u] = pq.top();
         pq.pop();
-        if (pw > f[u]) { continue; }
+        if (f[u] < uw) { continue; }
         for (auto [v, w] : adj[u]) {
             if (f[u] + w < f[v]) {
                 f[v] = f[u] + w;
@@ -31,34 +39,19 @@ void shortestPath(int s, int d) {
         }
     }
 
-    if (f[d] == LLONG_MAX) {
-        cout << -1 << endl;
-        return;
+    if (f[dest] == LLONG_MAX) {
+        cout << -1 << '\n';
+    } else {
+        vector<int> tmp;
+        int t = dest;
+        while (t != -1) {
+            tmp.push_back(t);
+            t = g[t];
+        }
+        reverse(begin(tmp), end(tmp));
+        cout << f[dest] << ' ' << tmp.size() - 1 << '\n';
+        for (int i = 0; i < tmp.size() - 1; i++) {
+            cout << tmp[i] << ' ' << tmp[i + 1] << '\n';
+        }
     }
-
-    int t = d;
-    vector<pair<int, int>> ans;
-    while (g[t] != -1) {
-        ans.emplace_back(g[t], t);
-        t = g[t];
-    }
-    reverse(begin(ans), end(ans));
-    cout << f[d] << ' ' << ans.size() << '\n';
-    for (auto [u, v] : ans) { cout << u << ' ' << v << '\n'; }
-    cout << flush;
-}
-
-int main() {
-    int s, d;
-    cin >> n >> m >> s >> d;
-    adj.resize(n);
-    for (int i = 0; i < m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
-        if (adj[u].contains(v)) { adj[u][v] = min(adj[u][v], w); }
-        adj[u][v] = w;
-    }
-
-    shortestPath(s, d);
-    return 0;
 }
