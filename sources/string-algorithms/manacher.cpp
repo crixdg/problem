@@ -2,39 +2,42 @@
 using namespace std;
 
 void longestPalindromeSubstring(string &s) {
-    string q("|");
-    for (char c : s) {
-        q.push_back(c);
-        q.push_back('|');
-    }
-    int n = q.size();
-    vector<int> ms(n);
+    int n = s.size();
+    vector<int> f;
+
+    int ansi = 0, ansl = 0;
     int c = 0, r = 0;
+
+    // odd
+    f.assign(n, 0);
     for (int i = 0; i < n; i++) {
-        if (i <= c + r) { ms[i] = min(ms[2 * c - i], c + r - i); }
-        while (i - ms[i] >= 0 && i + ms[i] < n &&
-               q[i - ms[i]] == q[i + ms[i]]) {
-            ms[i]++;
+        // x ic x || c, r => c+1-r, c+r
+        if (i < c + r) { f[i] = min(c + r - i, f[2 * c - i]); }
+        while (i - f[i] >= 0 && i + f[i] < n && s[i - f[i]] == s[i + f[i]]) {
+            f[i]++;
         }
-        ms[i]--;
-        if (i + ms[i] > c + r) {
-            c = i;
-            r = ms[i];
+        if (2 * f[i] - 1 > ansl) {
+            ansl = 2 * f[i] - 1;
+            ansi = i - f[i] + 1;
         }
     }
 
-    c = 0, r = 0;
+    // even
+    f.assign(n, 0);
     for (int i = 0; i < n; i++) {
-        if (i % 2) {
-            if (ms[i] > r) { c = i, r = ms[i]; }
-        } else {
-            if (ms[i] + 1 > r) { c = i, r = ms[i] + 1; }
+        // x i x || c, r => c - r, c + r
+        if (i < c + r) { f[i] = min(c + r - i, f[2 * c - i]); }
+        while (i - f[i] - 1 >= 0 && i + f[i] < n &&
+               s[i - f[i] - 1] == s[i + f[i]]) {
+            f[i]++;
+        }
+        if (2 * f[i] > ansl) {
+            ansl = 2 * f[i];
+            ansi = i - f[i];
         }
     }
-    for (int i = c - ms[c]; i <= c + ms[c]; i++) {
-        if (q[i] != '|') { cout << q[i]; }
-    }
-    cout << endl;
+
+    cout << s.substr(ansi, ansl) << '\n';
 }
 
 int main() {
