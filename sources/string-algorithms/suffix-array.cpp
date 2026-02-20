@@ -18,26 +18,29 @@ string longestRepeatedSubstring(string &s) {
             int v = (b + k < n) ? rk[b + k] : -1;
             return u < v;
         };
-
         sort(begin(sa), end(sa), cmp);
         vector<int> nrk(n);
         for (int i = 1; i < n; i++) {
             nrk[sa[i]] = nrk[sa[i - 1]] + int(cmp(sa[i - 1], sa[i]));
         }
         rk = nrk;
+        if (rk[sa[n - 1]] == n - 1) { break; }
     }
 
     // Kasai's Algorithm
     for (int i = 0; i < n; i++) { rk[sa[i]] = i; }
-    int mx = 0, mxi = 0;
+    int ansl = 0, ansi = 0;
     for (int i = 0, h = 0; i < n; i++) {
-        if (rk[i] == 0) { continue; }
-        int j = sa[rk[i] - 1];
+        if (rk[i] == n - 1) { continue; }
+        int j = sa[rk[i] + 1];
         while (i + h < n && j + h < n && s[i + h] == s[j + h]) { h++; }
-        if (h > mx || h == mx && i < mx) { mx = h, mxi = i; }
+        if (h > ansl) {
+            ansl = h;
+            ansi = i;
+        }
         if (h > 0) { h--; }
     }
-    return s.substr(mxi, mx);
+    return s.substr(ansi, ansl);
 }
 
 int main() {

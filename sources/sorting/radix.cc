@@ -7,7 +7,10 @@ void counting_sort(vector<int> &nums, int k) {
     int count[10] = {0};
 
     // count digit occurences
-    for (int i = 0; i < n; i++) { count[nums[i] / k % 10]++; }
+    for (int i = 0; i < n; i++) {
+        int d = nums[i] / k % 10;
+        count[d]++;
+    }
 
     // prefix sum occurences
     for (int i = 1; i < 10; i++) { count[i] += count[i - 1]; }
