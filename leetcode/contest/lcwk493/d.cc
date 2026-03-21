@@ -59,6 +59,7 @@ void __cin(stringstream &ss, pair<T, V> &values) {
 }
 
 template <typename T> void __cin(stringstream &ss, vector<T> &values) {
+    values.clear();
     char c;
     ss >> c;
 
@@ -83,67 +84,55 @@ template <typename T, typename... V> void __read(T &t, V &...v) {
 
 // --------------------------------------------------------------------------
 
-template <typename T> void __info(const T &x);
-template <typename T, typename V> void __info(const pair<T, V> &x);
+template <typename T> void __cout(const T &x);
+template <typename T, typename V> void __cout(const pair<T, V> &x);
 template <typename T, typename V, typename K>
-void __info(const tuple<T, V, K> &x);
+void __cout(const tuple<T, V, K> &x);
 
-void __info(int x) { cerr << x; }
-void __info(long x) { cerr << x; }
-void __info(long long x) { cerr << x; }
-void __info(unsigned x) { cerr << x; }
-void __info(unsigned long x) { cerr << x; }
-void __info(unsigned long long x) { cerr << x; }
-void __info(float x) { cerr << x; }
-void __info(double x) { cerr << x; }
-void __info(long double x) { cerr << x; }
-void __info(char x) { cerr << '\'' << x << '\''; }
-void __info(const char *x) { cerr << '\"' << x << '\"'; }
-void __info(const string &x) { cerr << '\"' << x << '\"'; }
-void __info(bool x) { cerr << (x ? "true" : "false"); }
-
-void __info(const vector<bool> &x) {
+void __cout(int x) { cout << x; }
+void __cout(long x) { cout << x; }
+void __cout(long long x) { cout << x; }
+void __cout(unsigned x) { cout << x; }
+void __cout(unsigned long x) { cout << x; }
+void __cout(unsigned long long x) { cout << x; }
+void __cout(float x) { cout << x; }
+void __cout(double x) { cout << x; }
+void __cout(long double x) { cout << x; }
+void __cout(char x) { cout << '\'' << x << '\''; }
+void __cout(const char *x) { cout << '\"' << x << '\"'; }
+void __cout(const string &x) { cout << '\"' << x << '\"'; }
+void __cout(bool x) { cout << (x ? "true" : "false"); }
+void __cout(const vector<bool> &x) {
     int f = 0;
-    cerr << '{';
-    for (auto i : x) { cerr << (f++ ? ", " : ""), __info(i); }
-    cerr << "}";
+    cout << '{';
+    for (auto i : x) { cout << (f++ ? ", " : ""), __cout(i); }
+    cout << "}";
 }
 
-template <typename T> void __info(const T &x) {
+template <typename T> void __cout(const T &x) {
     int f = 0;
-    cerr << '{';
-    for (auto &i : x) { cerr << (f++ ? ", " : ""), __info(i); }
-    cerr << "}";
+    cout << '{';
+    for (auto &i : x) { cout << (f++ ? ", " : ""), __cout(i); }
+    cout << "}";
 }
 
-template <typename T, typename V> void __info(const pair<T, V> &x) {
-    cerr << '{', __info(x.first), cerr << ", ", __info(x.second), cerr << '}';
+template <typename T, typename V> void __cout(const pair<T, V> &x) {
+    cout << '{', __info(x.first), cout << ", ", __cout(x.second), cout << '}';
 }
 
 template <typename T, typename K, typename V>
-void __info(const tuple<T, K, V> &x) {
-    cerr << '{', __info(get<0>(x)), cerr << ", ", __info(get<1>(x)),
-            cerr << ", ", __info(get<2>(x)), cerr << '}';
+void __cout(const tuple<T, K, V> &x) {
+    cout << '{', __info(get<0>(x)), cout << ", ", __info(get<1>(x)),
+            cout << ", ", __info(get<2>(x)), cout << '}';
 }
 
-void __print() { cerr << ']' << nl; }
+void __print() { cout << ']' << nl; }
 
 template <typename T, typename... V> void __print(T t, V... v) {
-    __info(t);
-    if (sizeof...(v)) { cerr << ", "; }
+    __cout(t);
+    if (sizeof...(v)) { cout << ", "; }
     __print(v...);
 }
-
-#ifdef INFO
-#define enable_info() cerr << "Enabling debug logging..." << nl;
-#define info(x...)                                                             \
-    cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = [";  \
-    __print(x);                                                                \
-    cerr << "\e[39m";
-#else
-#define enable_info()
-#define info(x...)
-#endif
 
 // --------------------------------------------------------------------------
 // Runner (only Leetcode)
@@ -170,8 +159,8 @@ void perform(Obj &&obj, MemFn memfn, Args &&...args) {
     } else {
         auto result = std::invoke(memfn, std::forward<Obj>(obj),
                                   std::forward<Args>(args)...);
-        __info(result);
-        cerr << nl;
+        __cout(result);
+        cout << nl;
     }
 }
 
@@ -180,51 +169,49 @@ void perform(Obj &&obj, MemFn memfn, Args &&...args) {
 class Solution {
 public:
 
-    int mod = 1e9 + 7;
-    int countPartitions(vector<int> &nums, int k) {
-        int n = nums.size();
-        vector<int> mntr(2 * n, INT_MAX), mxtr(2 * n, INT_MIN);
+    int getParent(vector<int> &par, int x) {
+        if (par[x] == x) { return x; }
+        return par[x] = getParent(par, par[x]);
+    }
+
+    int maxActivated(vector<vector<int>> &points) {
+        int n = points.size();
+        vector<int> par(n);
+        iota(begin(par), end(par), 0);
+        unordered_map<int, int> mpx, mpy;
         for (int i = 0; i < n; i++) {
-            int j = i;
-            for (j += n, mntr[j] = nums[i], mxtr[j] = nums[i]; j > 1; j >>= 1) {
-                mntr[j >> 1] = min(mntr[j], mntr[j ^ 1]);
-                mxtr[j >> 1] = max(mxtr[j], mxtr[j ^ 1]);
+            int u = points[i][0];
+            int v = points[i][1];
+            if (!mpx.contains(u) && !mpy.contains(v)) {
+                mpx[u] = i;
+                mpy[v] = i;
+            } else if (!mpx.contains(u)) {
+                int t = getParent(par, mpy[v]);
+                mpx[u] = t;
+                par[i] = t;
+            } else if (!mpy.contains(v)) {
+                int t = getParent(par, mpx[u]);
+                mpy[v] = t;
+                par[i] = t;
+            } else {
+                int j = getParent(par, mpx[u]);
+                int k = getParent(par, mpy[v]);
+                if (j > k) { swap(j, k); }
+                par[k] = j;
+                par[i] = j;
             }
         }
 
-        vector<long long> f(n + 1), p(n + 2);
-        p[n + 1] = 0;
-        f[n] = 1;
-        p[n] = 1;
-
-        for (int i = n - 1; i >= 0; i--) {
-            int l = i, r = n - 1;
-            while (l < r) {
-                int m = l + (r - l + 1 >> 1);
-                int mn = INT_MAX, mx = INT_MIN;
-                for (int tl = i + n, tr = m + n; tl <= tr; tl >>= 1, tr >>= 1) {
-                    if (tl & 1) {
-                        mn = min(mn, mntr[tl]);
-                        mx = max(mx, mxtr[tl]);
-                        tl++;
-                    }
-                    if (!(tr & 1)) {
-                        mn = min(mn, mntr[tr]);
-                        mx = max(mx, mxtr[tr]);
-                        tr--;
-                    }
-                }
-                if (mx - mn <= k) {
-                    l = m;
-                } else {
-                    r = m - 1;
-                }
-            }
-            f[i] = (p[i + 1] - p[r + 2]) % mod;
-            f[i] = (f[i] + mod) % mod;
-            p[i] = (p[i + 1] + f[i]) % mod;
+        unordered_map<int, int> mp;
+        for (int i = 0; i < n; i++) {
+            par[i] = getParent(par, i);
+            mp[par[i]]++;
         }
-        return f[0];
+        vector<int> cnt;
+        for (auto [_, v] : mp) { cnt.push_back(v); }
+        sort(begin(cnt), end(cnt), greater<>());
+        if (cnt.size() == 1) { return cnt[0] + 1; }
+        return cnt[0] + cnt[1] + 1;
     }
 };
 
@@ -232,24 +219,22 @@ public:
 // ********************************************************************
 
 void solve(int test_case [[maybe_unused]]) {
-    perform(Solution(), &Solution::countPartitions, nums, v);
+    // UPDATE problemMethodName & inputs HERE
+    perform(Solution(), &Solution::maxActivated, grid);
 }
 
 // **************************************************************************
 
 int main() {
     ios::sync_with_stdio(0);
-    cin.tie(0), cout.tie(0);
-    enable_info();
+    cin.tie(0);
     int test_cases = 1;
-    // cin >> test_cases;
-    while (test_cases--) {
-        solve(test_cases);
-        cout << flush;
-    }
+    __read(test_cases);
+    while (test_cases--) { solve(test_cases); }
+    cout << flush;
     return 0;
 }
 
 // **************************************************************************
-// *author* Keiron Dang
+// *author* Crix Dang
 // **************************************************************************
