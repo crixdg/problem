@@ -4,7 +4,8 @@
 
 using namespace std;
 
-template <class Int = int> struct DSU {
+template <class Int = int>
+struct DSU {
   vector<Int> p, sz;
   Int comps;
   explicit DSU(Int n = 0) : p(n), sz(n, 1), comps(n) { iota(p.begin(), p.end(), Int(0)); }
