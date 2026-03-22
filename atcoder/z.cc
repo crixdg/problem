@@ -15,9 +15,9 @@ int main() {
     // cout << fixed << setprecision(10);
     // cout << fixed << setprecision(15);
 
-    int t;
+    int t = 1;
     // cin >> t;
-    t = 1;
     while (t--) { solve(t); }
+    cout << flush;
     return 0;
 }
