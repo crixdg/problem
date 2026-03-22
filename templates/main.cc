@@ -1,5 +1,5 @@
 /**
- *     author: crixdg
+ *     author:  crixdg
  *     created: {{created}}
  **/
 #include <bits/stdc++.h>
