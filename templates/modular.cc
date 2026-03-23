@@ -1,46 +1,32 @@
 #include <bits/stdc++.h>
 
 template <typename T>
+  requires(std::same_as<typename std::decay<decltype(T::value)>::type, int> ||
+           std::same_as<typename std::decay<decltype(T::value)>::type, long long>)
 class modular_t {
+  using ll = long long;
   using type_t = typename std::decay<decltype(T::value)>::type;
-
-  constexpr modular_t() noexcept : __v() {}
-
-  template <typename V>
-  modular_t(const V &v) noexcept : __v(normalize(v)) {}
-
-  template <typename U>
-  type_t normalize(const U &__u) {
-    type_t __val;
-    type_t __md = mod();
-
-    if (-__md <= __u && __u < __md) {
-      __val = static_cast<type_t>(__u);
-    } else {
-      __val = static_cast<type_t>(__u % __md);
-    }
-
-    return __val < 0 ? __val + __md : __val;
-  }
-
   constexpr static type_t mod() { return T::value; }
 
-  modular_t &operator+=(const modular_t &__o) {
-    if ((__v += __o.__v) >= mod()) {
-      __v -= mod();
-    }
-    return *this;
-  }
+  constexpr modular_t() noexcept : v_() {}
+  template <std::integral _Un>
+    requires(std::same_as<_Un, int> || std::same_as<_Un, long long>)
+  modular_t(const _Un& u) : v_(normalize(u)) {}
 
-  modular_t &operator-=(const modular_t &__o) {
-    if ((__v -= __o.__v) < 0) {
-      __v += mod();
+  template <std::integral _Un>
+    requires(std::same_as<_Un, int> || std::same_as<_Un, long long>)
+  type_t normalize(const _Un& u) {
+    ll val, md = mod();
+    if (u > -md && u < md) {
+      val = static_cast<ll>(u);
+    } else {
+      val = static_cast<ll>(u % md);
     }
-    return *this;
+    return static_cast<type_t>(val < 0 ? val + md : val);
   }
 
 private:
-  type_t __v;
+  type_t v_;
 };
 
 using mod_t = int;

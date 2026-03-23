@@ -3,4 +3,6 @@ BasedOnStyle: LLVM
 InsertBraces: true
 ColumnLimit: 0
 
-BreakTemplateDeclarations: Yes
+BreakTemplateDeclarations: "No"
+
+AllowShortBlocksOnASingleLine: Always
