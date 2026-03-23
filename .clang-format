@@ -6,3 +6,5 @@ ColumnLimit: 0
 BreakTemplateDeclarations: "No"
 
 AllowShortBlocksOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
