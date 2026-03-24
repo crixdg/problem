@@ -1,3 +1,9 @@
+/**
+ *    author: crixdg
+ *    modified: 25.03.2026 00:56:31
+ *    created: 23.03.2026 10:02:41
+ *    description: modular arithmetic and combinatorics
+ */
 #include <bits/stdc++.h>
 
 template <typename T>
