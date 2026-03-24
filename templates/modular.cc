@@ -154,10 +154,11 @@ public:
   combinatorics_t(int n) { build(n); }
 
   void build(int n) {
-    if(n <= n_) { return; }
+    n = std::max(n, n_);
     fact.resize(n + 1);
     ifact.resize(n + 1);
     fact[0] = ifact[0] = 1;
+    if (n <= n_) { return; }
     for (int i = n_ + 1; i <= n; i++) {
       fact[i] = fact[i - 1] * i;
     }
