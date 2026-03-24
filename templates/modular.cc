@@ -3,9 +3,9 @@
 template <typename T>
 concept integer_c = std::same_as<T, int> || std::same_as<T, long> || std::same_as<T, long long>;
 
-/** author: crixdg, created: 2026-03-24
- * * modular multiplication of a and b modulo m
- **/
+// --------------------- MODULAR --------------------------
+
+/** modular multiplication **/
 template <integer_c T>
 T mod_multiply(T a, T b, T m) {
   assert(m > 0);
@@ -19,31 +19,30 @@ T mod_multiply(T a, T b, T m) {
   return ans;
 }
 
-/** author: crixdg, created: 2026-03-24
- * * modular inverse of a modulo m if exists, otherwise -1
- **/
+/** modular inverse **/
 template <integer_c T>
 T mod_inverse(T a, T m) {
   assert(m > 0);
-  T orig_m = m, u = 0, v = 1;
+  __int128_t orig_m = m, u = 0, v = 1;
   a %= m, a = a < 0 ? a + m : a;
   while (a != 0) {
     T t = m / a;
-    m -= t * a, std::swap(m, a);
-    u -= t * v, std::swap(u, v);
+    m -= a * t, std::swap(m, a);
+    u -= v * t, std::swap(u, v);
   }
   if (m != 1) { return T(-1); }
-  return static_cast<T>(u < 0 ? u + orig_m : u);
+  return static_cast<T>(u < __int128_t(0) ? u + orig_m : u);
 }
 
-/** author: crixdg, created: 2026-03-24
- * * modular exponentiation of a and b modulo m
- **/
+/** modular exponentiation **/
 template <integer_c T>
 T mod_power(T a, T b, T m) {
   assert(m > 0);
   bool is_negative_power = b < 0;
-  if (is_negative_power) { b = -b, a = mod_inverse<T>(a, m); }
+  if (is_negative_power) {
+    b = -b, a = mod_inverse<T>(a, m);
+    assert(a != T(-1));
+  }
   T ans = 1;
   a %= m;
   while (b != 0) {
@@ -54,21 +53,16 @@ T mod_power(T a, T b, T m) {
   return ans;
 }
 
-/** author: crixdg, created: 2026-03-24
- * * modular class
- **/
-template <integer_c T, T *_M>
+/** modular class **/
 // clang-format off
+template <integer_c T, T *M_>
 class modular_t {
-  static_assert(_M != nullptr);
-  using ll = long long;
-
 public:
-  modular_t() : value_(T()) {}
-  modular_t(const modular_t &other) : value_(other.value_) {}
+  constexpr modular_t() : value_(T(0)) {}
+  constexpr modular_t(const modular_t &other) : value_(other.value_) {}
   template <integer_c U> modular_t(const U &u) : value_(normalize(u)) {}
 
-  static T mod() { return *_M; }
+  static T mod() { return *M_; }
   T operator()() const { return value_; }
 
   template <integer_c U> explicit operator U() const { return static_cast<U>(value_); }
@@ -96,7 +90,7 @@ public:
   modular_t &operator--() { return *this -= 1; }
   modular_t operator++(int) { modular_t result(*this); *this += 1; return result; }
   modular_t operator--(int) { modular_t result(*this); *this -= 1; return result; }
-  modular_t operator-() const { return modular_t(-value_); }
+  modular_t operator-() const { return value_ == 0 ? modular_t() : modular_t(*M_-value_); }
 
   friend modular_t operator+(const modular_t &lhs, const modular_t &rhs) { return modular_t(lhs) += rhs; }
   template <integer_c U> friend modular_t operator+(const modular_t &lhs, U rhs) { return modular_t(lhs) += rhs; }
@@ -142,31 +136,18 @@ private:
   T value_;
 
   static T normalize(__int128_t val) {
-    __int128_t md = static_cast<__int128_t>(*_M);
+    __int128_t md = static_cast<__int128_t>(*M_);
     if (val <= -md || val >= md) { val %= md; }
     return static_cast<T>(val < __int128_t(0) ? val + md : val);
   }
 
   static T add(__int128_t a, __int128_t b) { return normalize(a + b); }
   static T sub(__int128_t a, __int128_t b) { return normalize(a - b); }
-  static T mul(__int128_t a, __int128_t b) { return mod_multiply<T>(a, b, *_M); }
-  static T div(__int128_t a, __int128_t b) { return mul(a, mod_inverse<T>(b, *_M)); }
+  static T mul(__int128_t a, __int128_t b) { return mod_multiply<T>(a, b, *M_); }
+  static T div(__int128_t a, __int128_t b) { T inv = mod_inverse<T>(b, *M_); assert(inv != T(-1)); return mul(a, inv); }
 };
 
 using mod_t = int;
 mod_t md = 1e9 + 7;
 using mint_t = modular_t<mod_t, &md>;
 // clang-format on
-
-int main() {
-  std::ios::sync_with_stdio(false);
-  std::cin.tie(nullptr);
-
-  std::cin >> md;
-
-  mint_t a;
-  std::cin >> a;
-  std::cout << a << '\n';
-
-  return 0;
-}
