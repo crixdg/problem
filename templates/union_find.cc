@@ -4,10 +4,9 @@
 
 using namespace std;
 
-template <class Int = int>
-struct DSU {
-  vector<Int> p, sz;
-  Int comps;
+struct dsu_t {
+  vector<int> p, sz;
+  Int comps
   explicit DSU(Int n = 0) : p(n), sz(n, 1), comps(n) { iota(p.begin(), p.end(), Int(0)); }
   Int find(Int x) { return p[x] == x ? x : p[x] = find(p[x]); }
   bool unite(Int a, Int b) {
