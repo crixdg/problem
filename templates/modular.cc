@@ -135,7 +135,8 @@ private:
   static T div(__int128_t a, __int128_t b) { T inv = mod_inverse<T>(b, *M_); assert(inv != T(-1)); return mul(a, inv); }
 };
 
-// clang-format on
+using mod_t = int; mod_t md = 1e9 + 7;
+using mint_t = modular_t<mod_t, &md>;
 
 // --------------------- COMBINATORICS --------------------------
 
@@ -143,7 +144,7 @@ template <integer_c T, T *M_>
 class combinatorics_t {
 public:
   using M = modular_t<T, M_>;
-  std::vector<M> fact, ifact;
+  combinatorics_t(int n) : n_(n) { build(n); }
 
   void build(int n) {
     fact.assign(n + 1, 1);
@@ -159,17 +160,21 @@ public:
   }
 
   M C(int n, int k) {
+    assert(n <= n_ && k <= n_ && n - k <= n_);
     if (k < 0 || k > n) { return 0; }
     return fact[n] * ifact[k] * ifact[n - k];
   }
 
   M P(int n, int k) {
+    assert(n <= n_ && n - k <= n_);
     if (k < 0 || k > n) { return 0; }
     return fact[n] * ifact[n - k];
   }
+
+private:
+  int n_;
+  std::vector<M> fact, ifact;
 };
 
-using mod_t = int;
-mod_t md = 1e9 + 7;
-using mint_t = modular_t<mod_t, &md>;
 using comb_t = combinatorics_t<mod_t, &md>;
+// clang-format on
