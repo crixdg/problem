@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 00:56:31
+ *    modified: 25.03.2026 01:06:22
  *    created: 23.03.2026 10:02:41
  *    description: modular arithmetic and combinatorics
  */
@@ -150,36 +150,37 @@ template <integer_c T, T *M_>
 class combinatorics_t {
 public:
   using M = modular_t<T, M_>;
-  combinatorics_t(int n) : n_(n) { build(n); }
+  combinatorics_t() { build(0); }
+  combinatorics_t(int n) { build(n); }
 
   void build(int n) {
-    fact.assign(n + 1, 1);
-    ifact.assign(n + 1, 1);
-    for (int i = 1; i <= n; i++) {
+    if(n <= n_) { return; }
+    fact.resize(n + 1);
+    ifact.resize(n + 1);
+    fact[0] = ifact[0] = 1;
+    for (int i = n_ + 1; i <= n; i++) {
       fact[i] = fact[i - 1] * i;
     }
     ifact[n] = inverse(fact[n], *M_);
     assert(ifact[n] != M(-1));
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = n - 1; i > n_; i--) {
       ifact[i] = ifact[i + 1] * (i + 1);
     }
+    n_ = n;
   }
 
   M C(int n, int k) {
-    assert(n <= n_ && k <= n_ && n - k <= n_);
     if (k < 0 || k > n) { return 0; }
-    return fact[n] * ifact[k] * ifact[n - k];
+    build(n); return fact[n] * ifact[k] * ifact[n - k];
   }
 
   M P(int n, int k) {
-    assert(n <= n_ && n - k <= n_);
     if (k < 0 || k > n) { return 0; }
-    return fact[n] * ifact[n - k];
+    build(n); return fact[n] * ifact[n - k];
   }
 
 private:
-  int n_;
-  std::vector<M> fact, ifact;
+  int n_; std::vector<M> fact, ifact;
 };
 
 using comb_t = combinatorics_t<mod_t, &md>;
