@@ -1,3 +1,8 @@
+/**
+ *    author: crixdg
+ *    modified: 25.03.2026 22:08:43
+ *    created: 25.03.2026 22:08:43
+ **/
 #include "modular.cc"
 #include <bits/stdc++.h>
 
@@ -30,7 +35,7 @@ bool is_prime(T n) {
 }
 
 template <integer_c T, T MAX_N_>
-class prime_base {
+class prime_base_t {
 public:
   using ll = long long;
   void spf_sieve() {
@@ -43,6 +48,11 @@ public:
         }
       }
     }
+  }
+
+  bool is_prime(T n) const {
+    if (n <= MAX_N_) { return spf_[n] == n; }
+    return is_prime<T>(n);
   }
 
   std::vector<std::pair<T, int>> prime_factors(T n) const {
@@ -65,3 +75,6 @@ public:
 private:
   std::vector<T> spf_;
 };
+
+using prime_base = prime_base_t<int, int(1e7)>;
+// clang-format on
