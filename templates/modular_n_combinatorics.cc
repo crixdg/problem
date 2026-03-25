@@ -3,7 +3,7 @@
  *    modified: 25.03.2026 01:06:22
  *    created: 23.03.2026 10:02:41
  *    description: modular arithmetic and combinatorics
- */
+ **/
 #include <bits/stdc++.h>
 
 template <typename T>
@@ -143,15 +143,18 @@ private:
 
 using mod_t = int; mod_t md = 1e9 + 7;
 using mint_t = modular_t<mod_t, &md>;
+// clang-format on
 
 // --------------------- COMBINATORICS --------------------------
 
+/** combinatorics class for prime modulus **/
+// clang-format off
 template <integer_c T, T *M_>
-class combinatorics_t {
+class combinatorics_prime_t {
 public:
   using M = modular_t<T, M_>;
-  combinatorics_t() { build(0); }
-  combinatorics_t(int n) { build(n); }
+  combinatorics_prime_t() { build(0); }
+  combinatorics_prime_t(int n) { build(n); }
 
   void build(int n) {
     n = std::max(n, n_);
@@ -184,5 +187,17 @@ private:
   int n_; std::vector<M> fact, ifact;
 };
 
-using comb_t = combinatorics_t<mod_t, &md>;
+using comb_pr_t= combinatorics_prime_t<mod_t, &md>;
+// clang-format on
+
+/** combinatorics class for general modulus **/
+// clang-format off
+template <integer_c T, T *M_>
+class combinatorics_general_t {
+  public:
+  using M = modular_t<T, M_>;
+  private:
+    int n_;
+    std::vector<M> fact, ifact;
+};
 // clang-format on
