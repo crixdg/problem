@@ -4,8 +4,8 @@
  *    created: 25.03.2026 11:30:50
  *    description: combinatorics class for small values
  *    notes:
- *    - Pascal's triangle in long long; exact values overflow well before n==2000 for central C(n,k).
- *    - P is not supported for combinatorics_small_t
+ *    - precomputed Pascal's triangle; n <= 2000.
+ *    - P is not supported.
  **/
 #include <bits/stdc++.h>
 
