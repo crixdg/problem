@@ -1,6 +1,34 @@
 #include "modular.cc"
 #include <bits/stdc++.h>
 
+template <typename T>
+bool miller_test(T a, long long d, T n, int s) {
+  T x = mod_power<T>(a, d, n);
+  if (x == 1 || x == n - 1) { return true; }
+  for (int i = 0; i < s - 1; i++) {
+    x = ((__int128_t)x * x) % n;
+    if (x == n - 1) { return true; }
+  }
+  return false;
+}
+
+template <typename T>
+bool is_prime(T n) {
+  if (n < 2) { return false; }
+  if (n == 2 || n == 3) { return true; }
+  if (n % 2 == 0 || n % 3 == 0) { return false; }
+
+  T d = n - 1;
+  int s = 0;
+  while (d % 2 == 0) { d >>= 1, ++s; }
+
+  for (T a : {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
+    if (a >= n) { break; }
+    if (!miller_test<T>(a, d, n, s)) { return false; }
+  }
+  return true;
+}
+
 template <integer_c T, T MAX_N_>
 class prime_base {
 public:
@@ -15,31 +43,6 @@ public:
         }
       }
     }
-  }
-
-  bool miller_test(T a, long long d, T n, int s) {
-    T x = mod_power<T>(a, d, n);
-    if (x == 1 || x == n - 1) { return true; }
-    for (int i = 0; i < s - 1; ++i) {
-      x = ((__int128)x * x) % n;
-      if (x == n - 1) { return true; }
-    }
-    return false;
-  }
-
-  bool is_prime(T n) {
-    if (n < 2) { return false; }
-    if (n % 2 == 0) { return n == 2; }
-    T d = n - 1;
-    int s = 0;
-    while (d % 2 == 0) { d >>= 1, ++s; }
-
-    std::vector<T> bases = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
-    for (T a : bases) {
-      if (a >= n) { break; }
-      if (!miller_test(a, d, n, s)) { return false; }
-    }
-    return true;
   }
 
   std::vector<std::pair<T, int>> prime_factors(T n) const {
