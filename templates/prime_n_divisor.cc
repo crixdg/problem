@@ -7,7 +7,7 @@
 #include <bits/stdc++.h>
 
 template <typename T>
-bool miller_test(T a, long long d, T n, int s) {
+bool miller_test(T a, T d, T n, int s) {
   T x = mod_power<T>(a, d, n);
   if (x == 1 || x == n - 1) { return true; }
   for (int i = 0; i < s - 1; i++) {
@@ -52,7 +52,7 @@ public:
 
   bool is_prime(T n) const {
     if (n <= MAX_N_) { return spf_[n] == n; }
-    return is_prime<T>(n);
+    throw std::invalid_argument("n is too large");
   }
 
   std::vector<std::pair<T, int>> prime_factors(T n) const {
@@ -70,6 +70,63 @@ public:
     }
     if (t != T(-1)) { factors.emplace_back(t, c); }
     return factors;
+  }
+
+  // D = (1 + e_1) * (1 + e_2) * ... * (1 + e_n) with n = p_1^e_1 * p_2^e_2 * ... * p_n^e_n
+  int no_of_divisors(T n) const {
+    int ans = 1;
+    while (n > 1) {
+      T t = spf_[n];
+      int c = 0;
+      while (spf_[n] == t) { c++, n /= spf_[n]; }
+      ans *= c + 1;
+    }
+    return ans;
+  }
+
+  // S = BigPi_1^k( (pi^(ei+1) - 1)/(pi-1) )
+  ll sum_of_divisors(T n) const {
+    ll ans = n;
+    while (n > 1) {
+      T t = spf_[n];
+      ll u = 1, v = ans;
+      while (spf_[n] == t) {
+        u *= t;
+        v += ans / u;
+        n /= spf_[n];
+      }
+      ans = v;
+    }
+    return ans;
+  }
+
+  // P = n^(D/2)
+  ll prod_of_divisors(T n) const {
+    int d = no_of_divisors(n);
+    __int128_t a = n;
+    if (d & 1) {
+      a = sqrt(a);
+    } else {
+      d >>= 1;
+    }
+
+    ll ans = 1;
+    while (d > 0) {
+      if (d & 1) { ans *= a; }
+      d >>= 1;
+      a *= a;
+    }
+    return ans;
+  }
+
+  // S2 = BigSigma_1^n( n/i * i )
+  ll sum_of_sum_of_divisors(T n) const {
+    ll ans = 0;
+    for (T i = 1; (ll)i * i <= n; i++) {
+      ans += (n / i) * i;
+      if (i != n / i) { ans += (n / i) * (n / i) * i / (n / i); }
+    }
+    return ans;
   }
 
 private:
