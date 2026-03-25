@@ -1,8 +1,7 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 01:06:22
+ *    modified: 25.03.2026 15:35:24
  *    created: 23.03.2026 10:02:41
- *    description: modular arithmetic
  **/
 #include <bits/stdc++.h>
 
