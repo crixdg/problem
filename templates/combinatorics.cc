@@ -2,10 +2,6 @@
  *    author: crixdg
  *    modified: 25.03.2026 11:30:50
  *    created: 25.03.2026 11:30:50
- *    description: combinatorics class for small values
- *    notes:
- *    - precomputed Pascal's triangle; n <= 2000.
- *    - P is not supported.
  **/
 #include <bits/stdc++.h>
 
@@ -48,10 +44,6 @@ public:
   long long C(int n, int k) {
     if (k < 0 || k > n) { return 0; }
     extend(n); return c_[n][k];
-  }
-
-  long long P(int n, int k) {
-    throw std::invalid_argument("P is not supported for combinatorics_small_t");
   }
 
 private:

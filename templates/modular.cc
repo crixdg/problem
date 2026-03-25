@@ -123,8 +123,8 @@ public:
   template <integer_c U> friend bool operator<=(const modular_t &lhs, U rhs) { return !(lhs > rhs); }
   template <integer_c U> friend bool operator<=(U lhs, const modular_t &rhs) { return !(lhs > rhs); }
 
-  friend modular_t power(const modular_t &lhs, long long rhs, T m) { return mod_power<T>(lhs(), rhs, m); }
-  friend modular_t inverse(const modular_t &lhs, T m) { return mod_inverse<T>(lhs(), m); }
+  modular_t power(long long rhs) { return mod_power<T>(value_, rhs, *M_); }
+  modular_t inverse() { return mod_inverse<T>(value_, *M_); }
 
 private:
   T value_;
