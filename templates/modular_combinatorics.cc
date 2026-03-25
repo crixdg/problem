@@ -10,6 +10,7 @@
 
 /** combinatorics class for prime modulus **/
 /** requires P_ to be a prime number **/
+// clang-format off
 template <integer_c T, T *P_, int MAX_FACT_N_>
 class combinatorics_prime_t {
 public:
@@ -44,13 +45,11 @@ public:
     extend(n);
     if (n < fact_n_) { return fact_[n] * ifact_[n - k]; }
     if (k >= *P_) { return _Mt(0); }
-    assert(k < fact_n_);
-    return C(n, k) * fact_[k];
+    assert(k < fact_n_); return C(n, k) * fact_[k];
   }
 
 private:
-  int fact_n_;
-  std::vector<_Mt> fact_, ifact_;
+  int fact_n_; std::vector<_Mt> fact_, ifact_;
 };
 
 using comb_pr_t = combinatorics_prime_t<mod_t, &md, int(2e7)>;
@@ -66,14 +65,13 @@ public:
   using _Mt = modular_t<T, M_>;
   using ll = long long;
   combinatorics_prime_power_t() {
-    assert(*M_ > 0);
-    pfree_n_ = static_cast<int>(std::min<T>(*M_, MAX_PFREE_N_ + 1));
-    pfree_.resize(pfree_n_);
+    assert(*M_ > 0 && *M_ <= MAX_PFREE_N_);
+    pfree_.resize(static_cast<int>(*M_));
     pfree_[0] = _Mt(1);
-    for (int i = 1; i < pfree_n_; i++) {
-      T x = i;
-      while (x % P_ == 0) { x /= P_; }
-      pfree_[i] = pfree_[i - 1] * x;
+    for (int i = 1; i < static_cast<int>(*M_); i++) {
+      T t = i;
+      while (t % P_ == 0) { t /= P_; }
+      pfree_[i] = pfree_[i - 1] * t;
     }
   }
 
@@ -87,7 +85,6 @@ public:
   }
 
 private:
-  int pfree_n_;
   std::vector<_Mt> pfree_;
 
   static constexpr int E_ = []() {
@@ -95,20 +92,6 @@ private:
     T m = *M_, p = P_;
     while (m % p == 0) { m /= p, e++; }
     return e;
-  }();
-
-  static constexpr int S_ = []() {
-    if constexpr (P_ != 2) {
-      return -1;
-    } else {
-      if (E_ == 1) {
-        return 1;
-      }
-      if (E_ == 2) {
-        return -1;
-      }
-      return 1;
-    }
   }();
 
   // legendre's formula / p-adic valuation of n!
@@ -120,18 +103,29 @@ private:
 
   // granville's formula / p-free factorial
   _Mt pfree_fact(ll n) {
-    if (n == 0) { return _Mt(1); }
-    assert(n % *M_ < pfree_n_);
-    _Mt ans = pfree_[n % *M_] * pfree_fact(n / P_);
-    return (n / (*M_)) % 2 == 0 ? ans : ans * S_;
+    _Mt ans = _Mt(1);
+    while (n > 0) {
+      ans *= pfree_[n % *M_];
+      if ((n / (*M_)) % 2 == 1) { ans *= pfree_[*M_ - 1]; }
+      n /= (*M_);
+    }
+    return ans;
   }
 };
 
-using comb_pp_t = combinatorics_prime_power_t<mod_t, &md, 2, int(2e7)>;
+template <mod_t P> using comb_pp_t = combinatorics_prime_power_t<mod_t, &md, P, int(2e7)>;
 // clang-format on
 
 // --------------------- COMBINATORICS (ARBITRARY MODULUS) --------------------------
 
 /** combinatorics class for arbitrary modulus **/
-/** requires M_ to be a prime number **/
+template<integer_c T, T *M_>
+class combinatorics_arbitrary_t {
+public:
+  using _Mt = modular_t<T, M_>;
+  combinatorics_arbitrary_t() {}
+  combinatorics_arbitrary_t(int n) {}
+};
+
+using comb_ar_t = combinatorics_arbitrary_t<mod_t, &md>;
 // clang-format on
