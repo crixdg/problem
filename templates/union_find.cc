@@ -1,11 +1,15 @@
 #include <bits/stdc++.h>
 
+using namespace std;
+
+/** disjoint set union **/
+// clang-format off
 struct dsu_t {
   int n, comps;
-  std::vector<int> p, sz;
+  vector<int> p, sz;
 
   dsu_t(int n_ = 0) : n(n_), comps(n_), p(n_), sz(n_, 1) {
-    std::iota(p.begin(), p.end(), 0);
+    iota(p.begin(), p.end(), 0);
   }
 
   /** find root; path halving compression **/
@@ -43,11 +47,11 @@ struct dsu_t {
  **/
 class weighted_dsu_t {
   int n;
-  std::vector<int> p, sz;
-  std::vector<long long> w;
+  vector<int> p, sz;
+  vector<long long> w;
 
   weighted_dsu_t(int n_ = 0) : n(n_), p(n_), w(n_, 0), sz(n_, 1) {
-    std::iota(p.begin(), p.end(), 0);
+    iota(p.begin(), p.end(), 0);
   }
 
   std::pair<int, long long> find(int x) {
@@ -58,14 +62,14 @@ class weighted_dsu_t {
     return {p[x], w[x]};
   }
 
-  
+
   bool unite(int x, int y, long long d) {
     auto [fx, wx] = find(x);
     auto [fy, wy] = find(y);
     if (fx == fy) { return wx - wy == d; }
     if (sz[fx] < sz[fy]) {
-      std::swap(fx, fy);
-      std::swap(wx, wy);
+      swap(fx, fy);
+      swap(wx, wy);
       d = -d;
     }
     // p[fy]=fx, w[fy]=wx-wy-d  <=>  label(x)-label(y)=d after linking
@@ -83,13 +87,13 @@ class weighted_dsu_t {
  **/
 struct DsuRollback {
   int n, comps;
-  std::vector<int> p, sz;
+  vector<int> p, sz;
   struct Change {
     int a, b, sz_a;
   };
-  std::vector<Change> st;
+  vector<Change> st;
   explicit DsuRollback(int n_ = 0) : n(n_), comps(n_), p(n_), sz(n_, 1) {
-    std::iota(p.begin(), p.end(), 0);
+    iota(p.begin(), p.end(), 0);
   }
   int find(int x) {
     while (p[x] != x) { x = p[x]; }
@@ -115,3 +119,5 @@ struct DsuRollback {
   }
   bool same(int a, int b) { return find(a) == find(b); }
 };
+
+// clang-format on
