@@ -17,12 +17,14 @@ struct weighted_dsu_t {
     iota(p.begin(), p.end(), 0);
   }
 
+  /** find root; path halving compression **/
   std::pair<int, long long> find(int x) {
     if (p[x] == x) { return {x, 0}; }
     auto [r, dw] = find(p[x]);
     return {p[x] = r, w[x] += dw};
   }
 
+  /** merge; false if not possible to link with given weight **/
   bool unite(int x, int y, long long d) {
     auto [fx, wx] = find(x);
     auto [fy, wy] = find(y);
