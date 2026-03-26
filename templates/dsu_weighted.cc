@@ -13,7 +13,7 @@ struct weighted_dsu_t {
   vector<int> p, sz;
   vector<long long> w;
 
-  weighted_dsu_t(int n) : comp_sz(n), p(n), w(n, 0), sz(n, 1) {
+  explicit weighted_dsu_t(int n) : comp_sz(n), p(n), w(n, 0), sz(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
 

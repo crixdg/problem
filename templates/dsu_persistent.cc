@@ -15,7 +15,7 @@ struct persistent_dsu_t {
   };
   vector<change_t> history;
 
-  persistent_dsu_t(int n) : comps(n), p(n), sz(n, 1) {
+  explicit persistent_dsu_t(int n) : comps(n), p(n), sz(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
 

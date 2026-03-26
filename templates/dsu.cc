@@ -12,7 +12,7 @@ struct dsu_t {
   int comp_sz;
   vector<int> p, sz;
 
-  dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) {
+  explicit dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
 
