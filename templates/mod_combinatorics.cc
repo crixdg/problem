@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 22:08:29
+ *    modified: 26.03.2026 12:24:41
  *    created: 25.03.2026 12:08:30
  **/
 #include "modular.cc"
@@ -9,7 +9,6 @@
 // --------------------- COMBINATORICS (PRIME MODULUS) --------------------------
 
 /** combinatorics class for prime modulus **/
-/** requires P_ to be a prime number **/
 // clang-format off
 template <integer_c T, T *P_, int MAX_FACT_N_ = int(2e7)>
 class combinatorics_prime_t {
@@ -59,6 +58,7 @@ using comb_pr_t = combinatorics_prime_t<mod_t, &md, int(2e7)>;
 
 /** combinatorics class for prime^e modulus **/
 /** requires M_ to be a prime^e number **/
+// clang-format off
 template <integer_c T, T *M_, T P_, int MAX_PFREE_N_ = int(2e7)>
 class combinatorics_prime_power_t {
 public:
@@ -118,7 +118,9 @@ template <mod_t P> using comb_pp_t = combinatorics_prime_power_t<mod_t, &md, P, 
 
 // --------------------- COMBINATORICS (ARBITRARY MODULUS) --------------------------
 
+// TODO: Chinese Remainder Theorem
 /** combinatorics class for arbitrary modulus **/
+// clang-format off
 template <integer_c T, T *M_>
 class combinatorics_arbitrary_t {
 public:

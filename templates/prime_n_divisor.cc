@@ -1,12 +1,34 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 22:08:43
+ *    modified: 26.03.2026 12:31:10
  *    created: 25.03.2026 22:08:43
  **/
-#include "modular.cc"
 #include <bits/stdc++.h>
 
 template <typename T>
+concept integer_c = std::same_as<T, int> || std::same_as<T, long> || std::same_as<T, long long>;
+
+/** modular exponentiation **/
+template <integer_c T>
+T mod_power(T a, long long b, T m) {
+  assert(m > 0);
+  bool is_negative_power = b < 0;
+  if (is_negative_power) {
+    b = -b, a = mod_inverse<T>(a, m);
+    assert(a != T(-1));
+  }
+  T ans = 1;
+  a %= m;
+  while (b != 0) {
+    if (b & 1) { ans = ((__int128_t)ans * a) % m; }
+    a = ((__int128_t)a * a) % m;
+    b >>= 1;
+  }
+  return ans;
+}
+
+/** miller-rabin primality test **/
+template <integer_c T>
 bool miller_test(T a, T d, T n, int s) {
   T x = mod_power<T>(a, d, n);
   if (x == 1 || x == n - 1) { return true; }
@@ -17,7 +39,8 @@ bool miller_test(T a, T d, T n, int s) {
   return false;
 }
 
-template <typename T>
+/** is_prime **/
+template <integer_c T>
 bool is_prime(T n) {
   if (n < 2) { return false; }
   if (n == 2 || n == 3) { return true; }
@@ -34,6 +57,8 @@ bool is_prime(T n) {
   return true;
 }
 
+/** prime_base_t **/
+// clang-format off
 template <integer_c T, T MAX_N_>
 class prime_base_t {
 public:
@@ -104,11 +129,8 @@ public:
   ll prod_of_divisors(T n) const {
     int d = no_of_divisors(n);
     __int128_t a = n;
-    if (d & 1) {
-      a = sqrt(a);
-    } else {
-      d >>= 1;
-    }
+    if (d & 1) { a = sqrt(a); }
+    else { d >>= 1; }
 
     ll ans = 1;
     while (d > 0) {

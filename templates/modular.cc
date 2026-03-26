@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 22:08:53
+ *    modified: 26.03.2026 12:29:39
  *    created: 23.03.2026 10:02:41
  **/
 #include <bits/stdc++.h>
@@ -103,25 +103,9 @@ public:
   template <integer_c U> friend bool operator==(const modular_t &lhs, U rhs) { return lhs == modular_t(rhs); }
   template <integer_c U> friend bool operator==(U lhs, const modular_t &rhs) { return modular_t(lhs) == rhs; }
 
-  friend bool operator!=(const modular_t &lhs, const modular_t &rhs) { return !(lhs == rhs); }
-  template <integer_c U> friend bool operator!=(const modular_t &lhs, U rhs) { return !(lhs == rhs); }
-  template <integer_c U> friend bool operator!=(U lhs, const modular_t &rhs) { return !(lhs == rhs); }
-
-  friend bool operator<(const modular_t &lhs, const modular_t &rhs) { return lhs.value_ < rhs.value_; }
-  template <integer_c U> friend bool operator<(const modular_t &lhs, U rhs) { return lhs < modular_t(rhs); }
-  template <integer_c U> friend bool operator<(U lhs, const modular_t &rhs) { return modular_t(lhs) < rhs; }
-
-  friend bool operator>(const modular_t &lhs, const modular_t &rhs) { return rhs < lhs; }
-  template <integer_c U> friend bool operator>(const modular_t &lhs, U rhs) { return rhs < lhs; }
-  template <integer_c U> friend bool operator>(U lhs, const modular_t &rhs) { return rhs < lhs; }
-
-  friend bool operator>=(const modular_t &lhs, const modular_t &rhs) { return !(lhs < rhs); }
-  template <integer_c U> friend bool operator>=(const modular_t &lhs, U rhs) { return !(lhs < rhs); }
-  template <integer_c U> friend bool operator>=(U lhs, const modular_t &rhs) { return !(lhs < rhs); }
-
-  friend bool operator<=(const modular_t &lhs, const modular_t &rhs) { return !(lhs > rhs); }
-  template <integer_c U> friend bool operator<=(const modular_t &lhs, U rhs) { return !(lhs > rhs); }
-  template <integer_c U> friend bool operator<=(U lhs, const modular_t &rhs) { return !(lhs > rhs); }
+  friend auto operator<=>(const modular_t &lhs, const modular_t &rhs) { return lhs.value_ <=> rhs.value_; }
+  template <integer_c U> friend auto operator<=>(const modular_t &lhs, U rhs) { return lhs <=> modular_t(rhs); }
+  template <integer_c U> friend auto operator<=>(U lhs, const modular_t &rhs) { return modular_t(lhs) <=> rhs; }
 
   modular_t power(long long rhs) { return mod_power<T>(value_, rhs, *M_); }
   modular_t inverse() { return mod_inverse<T>(value_, *M_); }

@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    modified: 26.03.2026 12:19:22
+ *    modified: 26.03.2026 12:23:09
  *    created: 26.03.2026 12:19:22
  **/
 #include <bits/stdc++.h>
@@ -23,15 +23,15 @@ public:
   T norm() const { return std::sqrt(norm2()); }
   T angle() const { return std::atan2(y_, x_); }
   T angle_degree() const { return std::atan2(y_, x_) * T(180) / std::numbers::pi_v<T>; }
+
+  vector_t perp() const { return vector_t(y_, -x_); }
   vector_t unit() const { return *this / norm(); }
+  vector_t operator-() const { return vector_t(-x_, -y_); }
 
   vector_t &operator+=(const vector_t &other) { x_ += other.x_, y_ += other.y_; return *this; }
   vector_t &operator-=(const vector_t &other) { x_ -= other.x_, y_ -= other.y_; return *this; }
   vector_t &operator*=(T scalar) { x_ *= scalar, y_ *= scalar; return *this; }
   vector_t &operator/=(T scalar) { assert(abs(scalar) > EPS_); x_ /= scalar, y_ /= scalar; return *this; }
-
-  vector_t operator-() const { return vector_t(-x_, -y_); }
-  vector_t perp() const { return vector_t(y_, -x_); }
 
   friend bool operator==(const vector_t &lhs, const vector_t &rhs) {
     return lhs.approx_eq(lhs.x_, rhs.x_) && lhs.approx_eq(lhs.y_, rhs.y_);

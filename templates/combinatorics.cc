@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    modified: 25.03.2026 11:30:50
+ *    modified: 26.03.2026 12:22:26
  *    created: 25.03.2026 11:30:50
  **/
 #include <bits/stdc++.h>
@@ -9,30 +9,14 @@
 // clang-format off
 class combinatorics_small_t {
 public:
-  combinatorics_small_t() { build(0); }
-  combinatorics_small_t(int n) { build(n); }
-
-  void build(int n) {
-    assert(n >= 0 && n <= 2000);
-    c_.resize(n + 1, std::vector<long long>(n + 1));
-    for (int i = 0; i <= n; i++) {
-      c_[i][0] = c_[i][i] = 1;
-    }
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j < i; j++) {
-        c_[i][j] = c_[i - 1][j] + c_[i - 1][j - 1];
-      }
-    }
-    n_ = n;
-  }
+  combinatorics_small_t(): n_(0), c_(1, std::vector<long long>(1, 1)) {}
+  combinatorics_small_t(int n): n_(0), c_(1, std::vector<long long>(1, 1)) { extend(n); }
 
   void extend(int n) {
     assert(n >= 0 && n <= 2000);
     if (n <= n_) { return; }
     c_.resize(n + 1, std::vector<long long>(n + 1));
-    for (int i = n_ + 1; i <= n; i++) {
-      c_[i][0] = c_[i][i] = 1;
-    }
+    for (int i = n_ + 1; i <= n; i++) { c_[i][0] = c_[i][i] = 1; }
     for (int i = n_ + 1; i <= n; i++) {
       for (int j = 1; j < i; j++) {
         c_[i][j] = c_[i - 1][j] + c_[i - 1][j - 1];
