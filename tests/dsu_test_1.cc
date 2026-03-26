@@ -1,8 +1,4 @@
-/**
- *    author: crixdg
- *    timestamp: 26.03.2026 21:44:56
- **/
-
+/** test dsu + size of set containing x: https://codeforces.com/problemset/problem/1167/C **/
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -45,3 +41,38 @@ struct dsu_t {
   /** return the number of connected components **/
   int components() { return comp_sz; }
 };
+
+#ifdef LOCAL
+#include "debug.h"
+#else
+#define debug(...) ((void)0)
+#endif
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int n, m;
+  cin >> n >> m;
+  dsu_t dsu(n);
+  {
+    while (m--) {
+      int k;
+      cin >> k;
+      if (k == 0) {
+        continue;
+      }
+      int x;
+      cin >> x;
+      while (--k) {
+        int y;
+        cin >> y;
+        dsu.unite(x - 1, y - 1);
+      }
+    }
+  }
+  for (int i = 0; i < n; i++) {
+    cout << dsu.size(i) << ' ';
+  }
+  cout << '\n';
+  return 0;
+}

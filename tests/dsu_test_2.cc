@@ -1,9 +1,7 @@
+/** test dsu + extended merge operation: https://codeforces.com/problemset/problem/722/C **/
 #include <bits/stdc++.h>
 
 using namespace std;
-/** problems:
- *    - test dsu + size of set containing x: https://codeforces.com/problemset/problem/1167/C
- **/
 
 /** disjoint set union **/
 struct dsu_t {
@@ -44,29 +42,50 @@ struct dsu_t {
   int components() { return comp_sz; }
 };
 
+#ifdef LOCAL
+#include "debug.h"
+#else
+#define debug(...) ((void)0)
+#endif
+
 int main() {
-  int n, m;
-  cin >> n >> m;
-  dsu_t dsu(n);
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int n;
+  cin >> n;
+  vector<long long> as(n);
+  for (long long &d : as) {
+    cin >> d;
+  }
+  vector<int> ds(n);
+  for (int &d : ds) {
+    cin >> d;
+  }
+  vector<long long> anss(n);
   {
-    while (m--) {
-      int k;
-      cin >> k;
-      if (k == 0) {
-        continue;
+    vector<bool> vs(n);
+    dsu_t dsu(n);
+
+    auto merge = [&](int a, int b) {
+      int u = dsu.find(a);
+      int v = dsu.find(b);
+      if (dsu.unite(u, v)) {
+        int root = dsu.find(a);
+        as[root] = as[u] + as[v];
       }
-      int x;
-      cin >> x;
-      while (--k) {
-        int y;
-        cin >> y;
-        dsu.unite(x - 1, y - 1);
-      }
+    };
+
+    for (int i = n - 1; i >= 0; i--) {
+      int d = ds[i] - 1;
+      vs[d] = true;
+      if (d > 0 && vs[d - 1]) { merge(d, d - 1); }
+      if (d < n - 1 && vs[d + 1]) { merge(d, d + 1); }
+      debug(dsu.find(d), as[dsu.find(d)]);
+      if (i > 0) { anss[i - 1] = max(anss[i], as[dsu.find(d)]); }
     }
   }
   for (int i = 0; i < n; i++) {
-    cout << dsu.size(i) << ' ';
+    cout << anss[i] << '\n';
   }
-  cout << '\n';
   return 0;
 }
