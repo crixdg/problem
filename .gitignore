@@ -1,6 +1,7 @@
 .idea/
 .vscode/**
 !.vscode/tasks.json
+!.vscode/settings.json
 
 *.o
 *.out
