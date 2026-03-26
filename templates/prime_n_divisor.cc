@@ -5,8 +5,10 @@
  **/
 #include <bits/stdc++.h>
 
+using namespace std;
+
 template <typename T>
-concept integer_c = std::same_as<T, int> || std::same_as<T, long> || std::same_as<T, long long>;
+concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
 
 /** modular exponentiation **/
 template <integer_c T>
@@ -77,11 +79,11 @@ public:
 
   bool is_prime(T n) const {
     if (n <= MAX_N_) { return spf_[n] == n; }
-    throw std::invalid_argument("n is too large");
+    throw invalid_argument("n is too large");
   }
 
-  std::vector<std::pair<T, int>> prime_factors(T n) const {
-    std::vector<std::pair<T, int>> factors;
+  vector<pair<T, int>> prime_factors(T n) const {
+    vector<pair<T, int>> factors;
     T t = -1;
     int c = 0;
     while (n > 1) {
@@ -129,7 +131,7 @@ public:
   ll prod_of_divisors(T n) const {
     int d = no_of_divisors(n);
     __int128_t a = n;
-    if (d & 1) { a = sqrt(a); }
+    if (d & 1) { a = sqrtl(a); }
     else { d >>= 1; }
 
     ll ans = 1;
@@ -152,7 +154,7 @@ public:
   }
 
 private:
-  std::vector<T> spf_;
+  vector<T> spf_;
 };
 
 using prime_base = prime_base_t<int, int(1e7)>;

@@ -5,9 +5,11 @@
  **/
 #include <bits/stdc++.h>
 
+using namespace std;
+
 // clang-format off
 template<typename T, auto EPS_ = T(1e-9)>
-requires std::same_as<T, double> || std::same_as<T, long double>
+requires same_as<T, double> || same_as<T, long double>
 class vector_t {
 public:
   constexpr vector_t() : x_(0), y_(0) {}
@@ -20,9 +22,9 @@ public:
   T dot(const vector_t &other) const { return x_ * other.x_ + y_ * other.y_; }
   T cross(const vector_t &other) const { return x_ * other.y_ - y_ * other.x_; }
   T norm2() const { return dot(*this); }
-  T norm() const { return std::sqrt(norm2()); }
-  T angle() const { return std::atan2(y_, x_); }
-  T angle_degree() const { return std::atan2(y_, x_) * T(180) / std::numbers::pi_v<T>; }
+  T norm() const { return sqrt(norm2()); }
+  T angle() const { return atan2(y_, x_); }
+  T angle_degree() const { return atan2(y_, x_) * T(180) / numbers::pi_v<T>; }
 
   vector_t perp() const { return vector_t(y_, -x_); }
   vector_t unit() const { return *this / norm(); }
@@ -37,8 +39,8 @@ public:
     return lhs.approx_eq(lhs.x_, rhs.x_) && lhs.approx_eq(lhs.y_, rhs.y_);
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const vector_t &v) { return os << v.x_ << ' ' << v.y_; }
-  friend std::istream &operator>>(std::istream &is, vector_t &v) { return is >> v.x_ >> v.y_; }
+  friend ostream &operator<<(ostream &os, const vector_t &v) { return os << v.x_ << ' ' << v.y_; }
+  friend istream &operator>>(istream &is, vector_t &v) { return is >> v.x_ >> v.y_; }
 
   friend vector_t operator+(const vector_t &lhs, const vector_t &rhs) { return vector_t(lhs) += rhs; }
   friend vector_t operator-(const vector_t &lhs, const vector_t &rhs) { return vector_t(lhs) -= rhs; }
@@ -48,7 +50,7 @@ public:
 
   /** |a-b| <= EPS_ * max(1, |a|, |b|) */
   static bool approx_eq(T a, T b) {
-    return std::abs(a - b) <= EPS_ * std::max({T(1), std::abs(a), std::abs(b)});
+    return abs(a - b) <= EPS_ * max({T(1), abs(a), abs(b)});
   }
 
 private:

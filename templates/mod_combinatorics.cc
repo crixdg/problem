@@ -6,6 +6,8 @@
 #include "modular.cc"
 #include <bits/stdc++.h>
 
+using namespace std;
+
 // --------------------- COMBINATORICS (PRIME MODULUS) --------------------------
 
 /** combinatorics class for prime modulus **/
@@ -15,11 +17,11 @@ class combinatorics_prime_t {
 public:
   using ll = long long;
   using _Mt = modular_t<T, P_>;
-  combinatorics_prime_t() : fact_n_(1), fact_(1, _Mt(1)), ifact_(1, _Mt(1)) {}
-  combinatorics_prime_t(int n) : fact_n_(1), fact_(1, _Mt(1)), ifact_(1, _Mt(1)) { extend(n); }
+  combinatorics_prime_t() {}
+  combinatorics_prime_t(int n) { extend(n); }
 
   void extend(ll n) {
-    n = static_cast<int>(std::min(n, std::min<ll>(*P_ - 1, MAX_FACT_N_)));
+    n = static_cast<int>(min(n, min<ll>(*P_ - 1, MAX_FACT_N_)));
     if (n < fact_n_) { return; }
     fact_.resize(n + 1), ifact_.resize(n + 1);
     for (int i = fact_n_; i <= n; i++) {
@@ -48,7 +50,7 @@ public:
   }
 
 private:
-  int fact_n_; std::vector<_Mt> fact_, ifact_;
+  int fact_n_{0}; vector<_Mt> fact_{1, _Mt(1)}, ifact_{1, _Mt(1)};
 };
 
 using comb_pr_t = combinatorics_prime_t<mod_t, &md, int(2e7)>;
@@ -85,7 +87,7 @@ public:
   }
 
 private:
-  std::vector<_Mt> pfree_;
+  vector<_Mt> pfree_;
 
   static constexpr int E_ = []() {
     int e = 0;

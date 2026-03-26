@@ -5,8 +5,10 @@
  **/
 #include <bits/stdc++.h>
 
+using namespace std;
+
 template <typename T>
-concept integer_c = std::same_as<T, int> || std::same_as<T, long> || std::same_as<T, long long>;
+concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
 
 // --------------------- MODULAR ARITHMETIC --------------------------
 
@@ -18,8 +20,8 @@ T mod_inverse(T a, T m) {
   a %= m, a = a < 0 ? a + m : a;
   while (a != 0) {
     T t = m / a;
-    m -= a * t, std::swap(m, a);
-    u -= v * t, std::swap(u, v);
+    m -= a * t, swap(m, a);
+    u -= v * t, swap(u, v);
   }
   if (m != 1) { return T(-1); }
   return static_cast<T>(u < __int128_t(0) ? u + orig_m : u);
@@ -57,7 +59,7 @@ public:
   T operator()() const { return value_; }
 
   template <integer_c U> explicit operator U() const { return static_cast<U>(value_); }
-  friend std::string to_string(const modular_t &m) { return std::to_string(m.value_); }
+  friend string to_string(const modular_t &m) { return to_string(m.value_); }
 
   template <typename U> friend U &operator>>(U &is, modular_t &m) { T u; is >> u; m.value_ = normalize(u); return is; }
   template <typename U> friend U &operator<<(U &os, const modular_t &m) { return os << m.value_; }
