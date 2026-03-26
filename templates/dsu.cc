@@ -1,7 +1,7 @@
 /**
  *    author: crixdg
  *    timestamp: 26.03.2026 17:58:44
- *    verified: https://atcoder.jp/contests/practice2/tasks/practice2_a
+ *    verified
  **/
 
 #include <bits/stdc++.h>
