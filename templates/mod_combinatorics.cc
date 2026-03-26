@@ -11,7 +11,7 @@
 /** combinatorics class for prime modulus **/
 /** requires P_ to be a prime number **/
 // clang-format off
-template <integer_c T, T *P_, int MAX_FACT_N_>
+template <integer_c T, T *P_, int MAX_FACT_N_ = int(2e7)>
 class combinatorics_prime_t {
 public:
   using ll = long long;
@@ -59,7 +59,7 @@ using comb_pr_t = combinatorics_prime_t<mod_t, &md, int(2e7)>;
 
 /** combinatorics class for prime^e modulus **/
 /** requires M_ to be a prime^e number **/
-template <integer_c T, T *M_, T P_, int MAX_PFREE_N_>
+template <integer_c T, T *M_, T P_, int MAX_PFREE_N_ = int(2e7)>
 class combinatorics_prime_power_t {
 public:
   using _Mt = modular_t<T, M_>;
@@ -119,7 +119,7 @@ template <mod_t P> using comb_pp_t = combinatorics_prime_power_t<mod_t, &md, P, 
 // --------------------- COMBINATORICS (ARBITRARY MODULUS) --------------------------
 
 /** combinatorics class for arbitrary modulus **/
-template<integer_c T, T *M_>
+template <integer_c T, T *M_>
 class combinatorics_arbitrary_t {
 public:
   using _Mt = modular_t<T, M_>;

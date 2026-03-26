@@ -111,15 +111,15 @@ public:
   template <integer_c U> friend bool operator<(const modular_t &lhs, U rhs) { return lhs < modular_t(rhs); }
   template <integer_c U> friend bool operator<(U lhs, const modular_t &rhs) { return modular_t(lhs) < rhs; }
 
-  friend bool operator>(const modular_t &lhs, const modular_t &rhs) { return lhs.value_ > rhs.value_; }
-  template <integer_c U> friend bool operator>(const modular_t &lhs, U rhs) { return lhs > modular_t(rhs); }
-  template <integer_c U> friend bool operator>(U lhs, const modular_t &rhs) { return modular_t(lhs) > rhs; }
+  friend bool operator>(const modular_t &lhs, const modular_t &rhs) { return rhs < lhs; }
+  template <integer_c U> friend bool operator>(const modular_t &lhs, U rhs) { return rhs < lhs; }
+  template <integer_c U> friend bool operator>(U lhs, const modular_t &rhs) { return rhs < lhs; }
 
-  friend bool operator>=(const modular_t &lhs, const modular_t &rhs) { return !(lhs.value_ < rhs.value_); }
+  friend bool operator>=(const modular_t &lhs, const modular_t &rhs) { return !(lhs < rhs); }
   template <integer_c U> friend bool operator>=(const modular_t &lhs, U rhs) { return !(lhs < rhs); }
   template <integer_c U> friend bool operator>=(U lhs, const modular_t &rhs) { return !(lhs < rhs); }
 
-  friend bool operator<=(const modular_t &lhs, const modular_t &rhs) { return !(lhs.value_ > rhs.value_); }
+  friend bool operator<=(const modular_t &lhs, const modular_t &rhs) { return !(lhs > rhs); }
   template <integer_c U> friend bool operator<=(const modular_t &lhs, U rhs) { return !(lhs > rhs); }
   template <integer_c U> friend bool operator<=(U lhs, const modular_t &rhs) { return !(lhs > rhs); }
 
