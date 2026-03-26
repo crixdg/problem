@@ -1,9 +1,11 @@
+/**
+ *    author: crixdg
+ *    modified: 26.03.2026 00:15:13
+ *    created: 26.03.2026 00:15:13
+ **/
 #include <bits/stdc++.h>
 
-/** author: crixdg, created: 2026-03-24
- * * the longest prefix suffix array of a string
- * * for kmp algorithm
- **/
+/** kmp lps array **/
 std::vector<int> kmp_lps(const std::string &s) {
   int n = s.size();
   std::vector<int> f(n, 0);
@@ -15,9 +17,7 @@ std::vector<int> kmp_lps(const std::string &s) {
   return f;
 }
 
-/** author: crixdg, created: 2026-03-24
- * * the z-array of a string
- **/
+/** z-array **/
 std::vector<int> z_array(const std::string &s) {
   int n = s.size();
   std::vector<int> z(n, 0);
