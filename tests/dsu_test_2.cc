@@ -80,8 +80,8 @@ int main() {
       vs[d] = true;
       if (d > 0 && vs[d - 1]) { merge(d, d - 1); }
       if (d < n - 1 && vs[d + 1]) { merge(d, d + 1); }
-      debug(dsu.find(d), as[dsu.find(d)]);
       if (i > 0) { anss[i - 1] = max(anss[i], as[dsu.find(d)]); }
+      debug(dsu.components());
     }
   }
   for (int i = 0; i < n; i++) {

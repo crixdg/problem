@@ -1,23 +1,26 @@
+/**
+ *    author: crixdg
+ *    timestamp: 27.03.2026 02:42:48
+ **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
 
 /** weighted disjoint set union **/
-class weighted_dsu_t {
-  int n;
+struct weighted_dsu_t {
+  int comp_sz;
   vector<int> p, sz;
   vector<long long> w;
 
-  weighted_dsu_t(int n_ = 0) : n(n_), p(n_), w(n_, 0), sz(n_, 1) {
+  weighted_dsu_t(int n) : comp_sz(n), p(n), w(n, 0), sz(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
 
   std::pair<int, long long> find(int x) {
     if (p[x] == x) { return {x, 0}; }
     auto [r, dw] = find(p[x]);
-    w[x] += dw;
-    p[x] = r;
-    return {p[x], w[x]};
+    return {p[x] = r, w[x] += dw};
   }
 
   bool unite(int x, int y, long long d) {
@@ -29,12 +32,28 @@ class weighted_dsu_t {
       swap(wx, wy);
       d = -d;
     }
-    // p[fy] = fx, w[fy] = wx-wy-d  <=>  label(x)-label(y)=d after linking
+    // p[fy] = fx => label(fx) = label(fy) + w[fy]
+    // label(x) - label(y) = d after linking
+    // label(fx) + wx - label(fy) - wy = d
+    // label(fx) + wx - (label(fy) + w[fy]) - wy = d
+    // wx - w[fy] - wy = d
+    // => w[fy] = wx - wy - d
     p[fy] = fx;
     w[fy] = wx - wy - d;
     sz[fx] += sz[fy];
+    comp_sz--;
     return true;
   }
+
+  /** check if two elements are in the same set **/
   bool same(int x, int y) { return find(x).first == find(y).first; }
+
+  /** return the weight of the set containing x **/
+  long long weight(int x) { return find(x).second; }
+
+  /** return the size of the set containing x **/
+  int size(int x) { return sz[find(x).first]; }
+
+  /** return the number of connected components **/
+  int components() { return comp_sz; }
 };
-// clang-format on
