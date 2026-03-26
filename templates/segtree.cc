@@ -1,20 +1,21 @@
 /**
  *    author: crixdg
- *    modified: 26.03.2026 15:47:54
+ *    modified: 26.03.2026 16:09:26
  *    created: 26.03.2026 15:47:54
  **/
 #include <bits/stdc++.h>
 
 using namespace std;
 
-template <typename T>
-concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
-
-// monoid: typename T, static T e(), static T op(T, T)
+/**
+ * T -> segment value type
+ * e() -> identity value for T
+ * op(a, b) -> merge two segment values
+ **/
 template <class M>
 concept monoid_c = requires { typename M::T; } && requires(typename M::T a, typename M::T b) {
-  M::e();      // identity element
-  M::op(a, b); // associative operation
+  M::e();
+  M::op(a, b);
 };
 
 template <monoid_c M>
@@ -104,11 +105,8 @@ struct U_t {
   U_t(pair<int, int> p) : pr(p) {}
   U_t(const U_t &other) : pr(other.pr) {}
 
-  friend U_t max(const U_t &a, const U_t &b) {
-    if (a.pr.first > b.pr.first) {
-      return U_t(a);
-    }
-    return U_t(b);
+  friend bool operator<(const U_t &a, const U_t &b) {
+    return a.pr < b.pr;
   }
 };
 
@@ -116,10 +114,10 @@ namespace std {
 template <>
 struct numeric_limits<U_t> {
   static U_t max() {
-    return U_t{make_pair(numeric_limits<int>::max(), numeric_limits<int>::max())};
+    return U_t{numeric_limits<int>::max(), numeric_limits<int>::max()};
   }
 };
-}; // namespace std
+} // namespace std
 
-using segtree_u_t = segment_tree_t<monoid_sum_t<U_t>>;
+using segtree_u_t = segment_tree_t<monoid_max_t<U_t>>;
 // clang-format on
