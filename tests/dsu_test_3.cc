@@ -1,5 +1,5 @@
-/** https://codeforces.com/problemset/problem/1167/C **/
-/** verified find, unite, and size operations **/
+/** https://judge.yosupo.jp/problem/unionfind */
+/** verified find, unite, and same operations **/
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -9,11 +9,9 @@ struct dsu_t {
   int comp_sz;
   vector<int> p, sz;
 
-  dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) {
-    iota(p.begin(), p.end(), 0);
-  }
+  explicit dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) { iota(p.begin(), p.end(), 0); }
 
-  /** find root; path halving compression **/
+  /** find root: path halving compression **/
   int find(int x) {
     while (p[x] != x) {
       p[x] = p[p[x]];
@@ -22,11 +20,11 @@ struct dsu_t {
     return x;
   }
 
-  /** merge; false if already same set **/
+  /** merge: false if already same set **/
   bool unite(int a, int b) {
     a = find(a), b = find(b);
     if (a == b) { return false; }
-    if (sz[a] < sz[b]) { std::swap(a, b); }
+    if (sz[a] < sz[b]) { swap(a, b); }
     p[b] = a;
     sz[a] += sz[b];
     comp_sz--;
@@ -52,28 +50,19 @@ struct dsu_t {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-  int n, m;
-  cin >> n >> m;
+  int n, q;
+  cin >> n >> q;
   dsu_t dsu(n);
   {
-    while (m--) {
-      int k;
-      cin >> k;
-      if (k == 0) {
-        continue;
-      }
-      int x;
-      cin >> x;
-      while (--k) {
-        int y;
-        cin >> y;
-        dsu.unite(x - 1, y - 1);
+    while (q--) {
+      int t, u, v;
+      cin >> t >> u >> v;
+      if (t == 0) {
+        dsu.unite(u, v);
+      } else {
+        cout << dsu.same(u, v) << '\n';
       }
     }
   }
-  for (int i = 0; i < n; i++) {
-    cout << dsu.size(i) << ' ';
-  }
-  cout << '\n';
   return 0;
 }

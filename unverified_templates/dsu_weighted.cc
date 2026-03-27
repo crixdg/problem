@@ -17,7 +17,7 @@ struct weighted_dsu_t {
     iota(p.begin(), p.end(), 0);
   }
 
-  /** find root; path halving compression **/
+  /** find root; full path compression **/
   std::pair<int, long long> find(int x) {
     if (p[x] == x) { return {x, 0}; }
     auto [r, dw] = find(p[x]);
@@ -37,7 +37,7 @@ struct weighted_dsu_t {
     // p[fy] = fx => label(fx) = label(fy) + w[fy]
     // label(x) - label(y) = d after linking
     // label(fx) + wx - label(fy) - wy = d
-    // label(fx) + wx - (label(fy) + w[fy]) - wy = d
+    // label(fx) + wx - (label(fx) + w[fy]) - wy = d
     // wx - w[fy] - wy = d
     // => w[fy] = wx - wy - d
     p[fy] = fx;

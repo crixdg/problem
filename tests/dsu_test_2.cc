@@ -1,4 +1,5 @@
-/** test dsu + extended merge operation: https://codeforces.com/problemset/problem/722/C **/
+/** https://codeforces.com/problemset/problem/722/C **/
+/** verified find, unite, and extended merge operation **/
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -81,7 +82,6 @@ int main() {
       if (d > 0 && vs[d - 1]) { merge(d, d - 1); }
       if (d < n - 1 && vs[d + 1]) { merge(d, d + 1); }
       if (i > 0) { anss[i - 1] = max(anss[i], as[dsu.find(d)]); }
-      debug(dsu.components());
     }
   }
   for (int i = 0; i < n; i++) {
