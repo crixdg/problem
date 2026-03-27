@@ -1,11 +1,8 @@
-/**
- *    author: crixdg
- *    modified: 26.03.2026 12:23:09
- *    created: 26.03.2026 12:19:22
- **/
 #include <bits/stdc++.h>
 
 using namespace std;
+
+/** ----------------------------- VECTOR ----------------------------- **/
 
 // clang-format off
 template<typename T, auto EPS_ = T(1e-9)>
@@ -56,15 +53,17 @@ public:
 private:
   T x_, y_;
 };
-
+// clang-format on
 
 using t_ = double;
 constexpr t_ EPS_ = 1e-9;
 using vec_t = vector_t<t_, EPS_>;
 constexpr auto vec_cmp = [](const vec_t &a, const vec_t &b) {
-  if (!vec_t::approx_eq(a.x(), b.x())) return a.x() < b.x();
-  if (!vec_t::approx_eq(a.y(), b.y())) return a.y() < b.y();
+  if (!vec_t::approx_eq(a.x(), b.x())) {
+    return a.x() < b.x();
+  }
+  if (!vec_t::approx_eq(a.y(), b.y())) {
+    return a.y() < b.y();
+  }
   return false;
 };
-
-// clang-format on
