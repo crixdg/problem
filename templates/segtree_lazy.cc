@@ -1,11 +1,13 @@
 /**
  *    author: crixdg
- *    modified: 26.03.2026 16:58:30
- *    created: 26.03.2026 16:58:30
+ *    timestamp: 28.03.2026 03:17:17
  **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
+
+/** ----------------------------- LAZY SEGMENT TREE ----------------------------- **/
 
 /**
  * V -> segment value type
@@ -154,8 +156,11 @@ private:
   }
 };
 
-/** lazy actions: example for add_sum, set_sum **/
+/** ----------------------------- LAZY ACTIONS ----------------------------- **/
 
+/**
+ * *ADD* SUM ACTION
+ **/
 struct lazy_add_sum_t {
   using V = long long;
   using F = long long;
@@ -167,6 +172,9 @@ struct lazy_add_sum_t {
 };
 static_assert(lazy_action_c<lazy_add_sum_t>);
 
+/**
+ * *SET* SUM ACTION
+ **/
 struct lazy_set_sum_t {
   using V = long long;
   using F = long long;
@@ -178,4 +186,7 @@ struct lazy_set_sum_t {
 };
 static_assert(lazy_action_c<lazy_set_sum_t>);
 
+/** ----------------------------- LAZY SEGMENT TREE TYPE ALIASES ----------------------------- **/
+
 using lazy_segtree_sum_t = lazy_segtree_t<lazy_add_sum_t>;
+using lazy_segtree_set_sum_t = lazy_segtree_t<lazy_set_sum_t>;
