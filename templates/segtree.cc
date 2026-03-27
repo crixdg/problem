@@ -8,8 +8,8 @@
 using namespace std;
 
 /**
- * T -> segment value type
- * e() -> identity value for T
+ * V -> segment value type
+ * e() -> identity value for V
  * op(a, b) -> merge two segment values
  **/
 template <class M>
@@ -18,6 +18,7 @@ concept monoid_c = requires { typename M::V; } && requires(typename M::V a, type
   M::op(a, b);
 };
 
+/** segment tree **/
 template <monoid_c M>
 class segment_tree_t {
 public:
@@ -83,6 +84,7 @@ struct monoid_sum_t {
   static V e() { return 0; }
   static V op(V a, V b) { return a + b; }
 };
+static_assert(monoid_c<monoid_sum_t<>>);
 
 template <typename T>
 struct monoid_max_t {
@@ -90,6 +92,7 @@ struct monoid_max_t {
   static V e() { return numeric_limits<V>::min(); }
   static V op(V a, V b) { return max(a, b); }
 };
+static_assert(monoid_c<monoid_max_t<int>>);
 
 template <typename T>
 struct monoid_min_t {
@@ -97,6 +100,7 @@ struct monoid_min_t {
   static V e() { return numeric_limits<V>::max(); }
   static V op(V a, V b) { return min(a, b); }
 };
+static_assert(monoid_c<monoid_min_t<int>>);
 
 using segtree_t = segment_tree_t<monoid_sum_t<>>;
 

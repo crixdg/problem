@@ -8,32 +8,34 @@
 using namespace std;
 
 /**
- * V_ -> segment value type
- * T_ -> lazy tag type
- * e() -> identity value for V_
- * x() -> identity tag for T_
+ * V -> segment value type
+ * F -> lazy tag type (function applied to segment)
+ * e() -> identity value for V
+ * id() -> identity tag for F (no pending updates)
  * op(a, b) -> merge two segment values
  * map(f, v, len) -> apply tag f to segment value v of length len
  * compose(f, g) -> tag equivalent to "first g, then f"
  **/
 template <class A>
-concept lazy_action_c = requires(typename A::V_ a, typename A::V_ b, typename A::T_ f, typename A::T_ g, int len) {
-  typename A::V_;
-  typename A::T_;
+concept lazy_action_c = requires(typename A::V a, typename A::V b, typename A::F f, typename A::F g, int len) {
+  typename A::V;
+  typename A::F;
   A::e();
-  A::x();
+  A::id();
   A::op(a, b);
   A::map(f, a, len);
   A::compose(f, g);
 };
 
+/** lazy segment tree **/
 template <lazy_action_c A>
 class lazy_segtree_t {
 public:
-  using V_ = typename A::V_;
-  using T_ = typename A::T_;
+  using V = typename A::V;
+  using F = typename A::F;
 
-  explicit lazy_segtree_t(int n, V_ fill = A::e()) : n_(n) {
+  /** construct a lazy segment tree of size n with fill value A::e() **/
+  explicit lazy_segtree_t(int n, V fill = A::e()) : n_(n) {
     if (n_ == 0) { return; }
     for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
     tr_.assign(2 * sz_, A::e());
@@ -43,7 +45,8 @@ public:
     for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
   }
 
-  explicit lazy_segtree_t(const vector<V_> &a) : n_((int)a.size()) {
+  /** construct a lazy segment tree from a vector of values **/
+  explicit lazy_segtree_t(const vector<V> &a) : n_((int)a.size()) {
     if (n_ == 0) { return; }
     for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
     tr_.assign(2 * sz_, A::e());
@@ -53,39 +56,44 @@ public:
     for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
   }
 
+  /** return the size of the lazy segment tree **/
   int size() const { return n_; }
 
-  /** aggregate on [l, r) */
-  V_ query(int l, int r) {
+  /** aggregate on [l, r) ; empty range -> identity */
+  V query(int l, int r) {
     assert(0 <= l && l <= r && r <= n_);
     return query_(1, 0, sz_, l, r);
   }
 
   /** apply tag x to [l, r) */
-  void apply(int l, int r, T_ x) {
+  void apply(int l, int r, F x) {
     assert(0 <= l && l <= r && r <= n_);
     apply_(1, 0, sz_, l, r, x);
   }
 
-  void set(int i, V_ t) {
+  /** set the value at index i to t **/
+  void set(int i, V t) {
     assert(0 <= i && i < n_);
     set_(1, 0, sz_, i, t);
   }
 
-  V_ all() const {
+  /** return the aggregate of the entire segment tree **/
+  V all() const {
     assert(n_ > 0);
     return tr_[1];
   }
 
 private:
   int n_{}, sz_{};
-  vector<V_> tr_;
-  vector<T_> lz_;
+  vector<V> tr_;
+  vector<F> lz_;
   vector<bool> has_;
 
+  /** pull up the value at index i **/
   void pull(int i) { tr_[i] = A::op(tr_[i << 1], tr_[i << 1 | 1]); }
 
-  void apply_node(int i, int len, T_ x) {
+  /** apply tag x to the segment at index i **/
+  void apply_node(int i, int len, F x) {
     tr_[i] = A::map(x, tr_[i], len);
     if (has_[i]) {
       lz_[i] = A::compose(x, lz_[i]);
@@ -95,6 +103,7 @@ private:
     }
   }
 
+  /** push down the tag at index i **/
   void push(int i, int l, int r) {
     if (!has_[i] || r - l <= 1) { return; }
     int m = (l + r) >> 1;
@@ -105,7 +114,7 @@ private:
   }
 
   /** aggregate on [ql, qr) */
-  V_ query_(int i, int l, int r, int ql, int qr) {
+  V query_(int i, int l, int r, int ql, int qr) {
     if (qr <= l || r <= ql) { return A::e(); }
     if (ql <= l && r <= qr) { return tr_[i]; }
     push(i, l, r);
@@ -114,7 +123,7 @@ private:
   }
 
   /** apply tag x to [ql, qr) */
-  void apply_(int i, int l, int r, int ql, int qr, T_ x) {
+  void apply_(int i, int l, int r, int ql, int qr, F x) {
     if (qr <= l || r <= ql) { return; }
     if (ql <= l && r <= qr) {
       apply_node(i, r - l, x);
@@ -127,7 +136,7 @@ private:
     pull(i);
   }
 
-  void set_(int i, int l, int r, int p, V_ t) {
+  void set_(int i, int l, int r, int p, V t) {
     if (r - l == 1) {
       tr_[i] = t;
       lz_[i] = A::x();
@@ -148,23 +157,25 @@ private:
 /** lazy actions: example for add_sum, set_sum **/
 
 struct lazy_add_sum_t {
-  using V_ = long long;
-  using T_ = long long;
-  static V_ e() { return 0LL; }
-  static T_ x() { return 0LL; }
-  static V_ op(V_ a, V_ b) { return a + b; }
-  static V_ map(T_ x, V_ t, int len) { return t + x * len; }
-  static T_ compose(T_ x, T_ y) { return x + y; } // first y, then x
+  using V = long long;
+  using F = long long;
+  static V e() { return 0LL; }
+  static F id() { return 0LL; }
+  static V op(V a, V b) { return a + b; }
+  static V map(F x, V t, int len) { return t + x * len; }
+  static F compose(F x, F y) { return x + y; } // first y, then x
 };
+static_assert(lazy_action_c<lazy_add_sum_t>);
 
 struct lazy_set_sum_t {
-  using V_ = long long;
-  using T_ = long long;
-  static V_ e() { return 0LL; }
-  static T_ x() { return 0LL; }
-  static V_ op(V_ a, V_ b) { return a + b; }
-  static V_ map(T_ x, V_ t, int len) { return x * len; }
-  static T_ compose(T_ x, T_ y) { return x; } // first y, then x
+  using V = long long;
+  using F = long long;
+  static V e() { return 0LL; }
+  static F id() { return 0LL; }
+  static V op(V a, V b) { return a + b; }
+  static V map(F x, V t, int len) { return x * len; }
+  static F compose(F x, F y) { return x; } // first y, then x
 };
+static_assert(lazy_action_c<lazy_set_sum_t>);
 
 using lazy_segtree_sum_t = lazy_segtree_t<lazy_add_sum_t>;
