@@ -1,11 +1,13 @@
 /**
  *    author: crixdg
- *    timestamp: 27.03.2026 03:00:32
+ *    timestamp: 28.03.2026 03:13:12
  **/
 
 #include <bits/stdc++.h>
 
 using namespace std;
+
+/** ----------------------------- SEGMENT TREE ----------------------------- **/
 
 /**
  * V -> segment value type
@@ -18,7 +20,6 @@ concept monoid_c = requires { typename M::V; } && requires(typename M::V a, type
   M::op(a, b);
 };
 
-/** segment tree **/
 template <monoid_c M>
 struct segment_tree_t {
   using V = typename M::V;
@@ -72,7 +73,11 @@ struct segment_tree_t {
   }
 };
 
-/** monoids: example for sum, max, min **/
+/** ----------------------------- MONOIDS ----------------------------- **/
+
+/**
+ * *SUM* MONOID
+ **/
 template <typename T = long long>
 struct monoid_sum_t {
   using V = T;
@@ -81,6 +86,9 @@ struct monoid_sum_t {
 };
 static_assert(monoid_c<monoid_sum_t<>>);
 
+/**
+ * *MAX* MONOID
+ **/
 template <typename T>
 struct monoid_max_t {
   using V = T;
@@ -89,6 +97,9 @@ struct monoid_max_t {
 };
 static_assert(monoid_c<monoid_max_t<int>>);
 
+/**
+ * *MIN* MONOID
+ **/
 template <typename T>
 struct monoid_min_t {
   using V = T;
@@ -97,7 +108,11 @@ struct monoid_min_t {
 };
 static_assert(monoid_c<monoid_min_t<int>>);
 
+/** ----------------------------- SEGMENT TREE TYPE ALIASES ----------------------------- **/
+
 using segtree_t = segment_tree_t<monoid_sum_t<>>;
+
+/** ----------------------------- CUSTOM MONOID ----------------------------- **/
 
 /** custom T : example for maximum segment tree **/
 struct T_t {
