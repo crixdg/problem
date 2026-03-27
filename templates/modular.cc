@@ -1,16 +1,16 @@
 /**
  *    author: crixdg
- *    modified: 26.03.2026 12:29:39
- *    created: 23.03.2026 10:02:41
+ *    timestamp: 27.03.2026 13:52:10
  **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
 
+// --------------------- MODULAR ARITHMETIC --------------------------
+
 template <typename T>
 concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
-
-// --------------------- MODULAR ARITHMETIC --------------------------
 
 /** modular inverse **/
 template <integer_c T>
@@ -46,7 +46,6 @@ T mod_power(T a, long long b, T m) {
   return ans;
 }
 
-/** modular class **/
 // clang-format off
 template <integer_c T, T *M_>
 class modular_t {
@@ -125,7 +124,8 @@ private:
   static T mul(__int128_t a, __int128_t b) { return normalize(a * b); }
   static T div(__int128_t a, __int128_t b) { T inv = mod_inverse<T>(b, *M_); assert(inv != T(-1)); return mul(a, inv); }
 };
-
-using mod_t = int; mod_t md = 1e9 + 7;
-using mint_t = modular_t<mod_t, &md>;
 // clang-format on
+
+using mod_t = int;
+mod_t md = 1e9 + 7;
+using mint_t = modular_t<mod_t, &md>;

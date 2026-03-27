@@ -7,6 +7,8 @@
 
 using namespace std;
 
+// ------------------------ WEIGHTED DISJOINT SET UNION ------------------------
+
 template <typename Op>
 concept weighted_dsu_op_c = requires { typename Op::W; } &&
                             requires(typename Op::W, typename Op::W a, typename Op::W b, typename Op::W d) {
@@ -76,7 +78,7 @@ struct weighted_dsu_t {
   int components() { return comp_sz; }
 };
 
-/** -------------------------------------------------------------- **/
+// ------------------------- WEIGHTED DSU OPERATIONS ---------------------------
 
 /**
  * * LABEL(x) - LABEL(y) = d

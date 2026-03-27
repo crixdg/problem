@@ -7,7 +7,8 @@
 
 using namespace std;
 
-/** disjoint set union **/
+// ----------------------------- DISJOINT SET UNION -----------------------------
+
 struct dsu_t {
   int comp_sz;
   vector<int> p, sz;

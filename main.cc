@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// ----------------------------- MAIN -----------------------------
+
 #ifdef LOCAL
 #include "debug.h"
 #else
