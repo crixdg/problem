@@ -39,7 +39,7 @@ public:
     if (n_ == 0) { return; }
     for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
     tr_.assign(2 * sz_, A::e());
-    lz_.assign(2 * sz_, A::x());
+    lz_.assign(2 * sz_, A::id());
     has_.assign(2 * sz_, false);
     for (int i = 0; i < n_; ++i) { tr_[sz_ + i] = fill; }
     for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
@@ -50,7 +50,7 @@ public:
     if (n_ == 0) { return; }
     for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
     tr_.assign(2 * sz_, A::e());
-    lz_.assign(2 * sz_, A::x());
+    lz_.assign(2 * sz_, A::id());
     has_.assign(2 * sz_, false);
     for (int i = 0; i < n_; ++i) { tr_[sz_ + i] = a[i]; }
     for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
@@ -109,7 +109,7 @@ private:
     int m = (l + r) >> 1;
     apply_node(i << 1, m - l, lz_[i]);
     apply_node(i << 1 | 1, r - m, lz_[i]);
-    lz_[i] = A::x();
+    lz_[i] = A::id();
     has_[i] = false;
   }
 
@@ -139,7 +139,7 @@ private:
   void set_(int i, int l, int r, int p, V t) {
     if (r - l == 1) {
       tr_[i] = t;
-      lz_[i] = A::x();
+      lz_[i] = A::id();
       has_[i] = false;
       return;
     }
@@ -162,8 +162,8 @@ struct lazy_add_sum_t {
   static V e() { return 0LL; }
   static F id() { return 0LL; }
   static V op(V a, V b) { return a + b; }
-  static V map(F x, V t, int len) { return t + x * len; }
-  static F compose(F x, F y) { return x + y; } // first y, then x
+  static V map(F x, V t, int len) { return (x == id() ? t : t + x * len); }
+  static F compose(F x, F y) { return (x == id() ? y : x + y); } // first y, then x
 };
 static_assert(lazy_action_c<lazy_add_sum_t>);
 
@@ -173,8 +173,8 @@ struct lazy_set_sum_t {
   static V e() { return 0LL; }
   static F id() { return 0LL; }
   static V op(V a, V b) { return a + b; }
-  static V map(F x, V t, int len) { return x * len; }
-  static F compose(F x, F y) { return x; } // first y, then x
+  static V map(F x, V t, int len) { return (x == id() ? t : x * len); }
+  static F compose(F x, F y) { return (x == id() ? y : x); } // first y, then x
 };
 static_assert(lazy_action_c<lazy_set_sum_t>);
 

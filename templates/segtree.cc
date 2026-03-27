@@ -20,61 +20,56 @@ concept monoid_c = requires { typename M::V; } && requires(typename M::V a, type
 
 /** segment tree **/
 template <monoid_c M>
-class segment_tree_t {
-public:
+struct segment_tree_t {
   using V = typename M::V;
 
+  int n{}, sz{}; // real_size and segment tree array size
+  vector<V> tr;  // segment tree values
+
+  /** pull up the value at index i **/
+  void pull_(int i) { tr[i] = M::op(tr[i << 1], tr[i << 1 | 1]); }
+
   /** construct a segment tree of size n with fill value M::e() **/
-  explicit segment_tree_t(int n, V fill = M::e()) : n_(n) {
-    if (n_ == 0) { return; }
-    for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
-    tr_.assign(2 * sz_, M::e());
-    for (int i = 0; i < n_; ++i) { tr_[sz_ + i] = fill; }
-    for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
+  explicit segment_tree_t(int n, V fill = M::e()) : n(n) {
+    if (n == 0) { return; }
+    for (sz = 1; sz < n; sz <<= 1) {}
+    tr.assign(2 * sz, M::e());
+    for (int i = 0; i < n; ++i) { tr[sz + i] = fill; }
+    for (int i = sz - 1; i >= 1; --i) { pull_(i); }
   }
 
   /** construct a segment tree from a vector of values **/
-  explicit segment_tree_t(const vector<V> &a) : n_((int)a.size()) {
-    if (n_ == 0) { return; }
-    for (sz_ = 1; sz_ < n_; sz_ <<= 1) {}
-    tr_.assign(2 * sz_, M::e());
-    for (int i = 0; i < n_; ++i) { tr_[sz_ + i] = a[i]; }
-    for (int i = sz_ - 1; i >= 1; --i) { pull(i); }
+  explicit segment_tree_t(const vector<V> &a) : n((int)a.size()) {
+    if (n == 0) { return; }
+    for (sz = 1; sz < n; sz <<= 1) {}
+    tr.assign(2 * sz, M::e());
+    for (int i = 0; i < n; ++i) { tr[sz + i] = a[i]; }
+    for (int i = sz - 1; i >= 1; --i) { pull_(i); }
   }
-
-  /** return the size of the segment tree **/
-  int size() const { return n_; }
 
   /** set the value at index i to x **/
   void set(int i, V x) {
-    assert(0 <= i && i < n_);
-    for (i += sz_, tr_[i] = x; i >>= 1;) { pull(i); }
+    assert(0 <= i && i < n);
+    for (i += sz, tr[i] = x; i >>= 1;) { pull_(i); }
   }
 
   /** aggregate on [l, r) ; empty range -> identity */
   V query(int l, int r) const {
-    assert(0 <= l && l <= r && r <= n_);
+    assert(0 <= l && l <= r && r <= n);
     if (l == r) { return M::e(); }
     V L = M::e(), R = M::e();
-    for (l += sz_, r += sz_; l < r; l >>= 1, r >>= 1) {
-      if (l & 1) { L = M::op(L, tr_[l++]); }
-      if (r & 1) { R = M::op(tr_[--r], R); }
+    for (l += sz, r += sz; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) { L = M::op(L, tr[l++]); }
+      if (r & 1) { R = M::op(tr[--r], R); }
     }
     return M::op(L, R);
   }
 
   /** return the aggregate of the entire segment tree **/
   V all() const {
-    assert(n_ > 0);
-    return tr_[1];
+    assert(n > 0);
+    return tr[1];
   }
-
-private:
-  int n_{}, sz_{};
-  vector<V> tr_;
-
-  /** pull up the value at index i **/
-  void pull(int i) { tr_[i] = M::op(tr_[i << 1], tr_[i << 1 | 1]); }
 };
 
 /** monoids: example for sum, max, min **/
