@@ -1,6 +1,6 @@
 /**
  *    author: crixdg
- *    timestamp: 27.03.2026 02:42:48
+ *    timestamp: 27.03.2026 13:25:46
  **/
 
 #include <bits/stdc++.h>
@@ -105,8 +105,14 @@ struct dsu_weight_op_modulo {
   using W = T;
   static W e() { return W(0); }
   static W join(W a, W b) { return (a + b) % M_; }
-  static W diff(W a, W b) { return (a - b) % M_; }
-  static W flip(W d) { return -d; }
+  static W diff(W a, W b) {
+    W ans = (a - b) % M_;
+    return (ans < 0 ? ans + M_ : ans);
+  }
+  static W flip(W d) {
+    W ans = -d % M_;
+    return (ans < 0 ? ans + M_ : ans);
+  }
 };
 static_assert(weighted_dsu_op_c<dsu_weight_op_modulo<long long, (long long)1e9 + 7>>);
 
