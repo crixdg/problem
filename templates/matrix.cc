@@ -1,8 +1,13 @@
+/**
+ *    author: crixdg
+ *    timestamp: 28.03.2026 06:25:55
+ **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
 
-// ----------------------------- MATRIX -----------------------------
+/** ----------------------------- MATRIX ----------------------------- **/
 
 /** supports up to 4x4 matrices */
 template <typename T, int N, int M>

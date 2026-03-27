@@ -1,3 +1,8 @@
+/**
+ *    author: crixdg
+ *    timestamp: 28.03.2026 06:25:00
+ **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -55,15 +60,11 @@ private:
 };
 // clang-format on
 
-using t_ = double;
-constexpr t_ EPS_ = 1e-9;
-using vec_t = vector_t<t_, EPS_>;
+using vec_c = double;
+constexpr vec_c EPS_ = 1e-9;
+using vec_t = vector_t<vec_c, EPS_>;
 constexpr auto vec_cmp = [](const vec_t &a, const vec_t &b) {
-  if (!vec_t::approx_eq(a.x(), b.x())) {
-    return a.x() < b.x();
-  }
-  if (!vec_t::approx_eq(a.y(), b.y())) {
-    return a.y() < b.y();
-  }
+  if (!vec_t::approx_eq(a.x(), b.x())) { return a.x() < b.x(); }
+  if (!vec_t::approx_eq(a.y(), b.y())) { return a.y() < b.y(); }
   return false;
 };

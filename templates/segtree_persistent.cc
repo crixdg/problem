@@ -1,6 +1,13 @@
+/**
+ *    author: crixdg
+ *    timestamp: 28.03.2026 06:26:49
+ **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
+
+/** ----------------------------- PERSISTENT SEGMENT TREE ----------------------------- **/
 
 /**
  * V -> segment value type
@@ -88,6 +95,8 @@ struct persistent_segment_tree_t {
   }
 };
 
+/** ----------------------------- MONOIDS ----------------------------- **/
+
 template <typename T = long long>
 struct monoid_sum_t {
   using V = T;
@@ -95,5 +104,7 @@ struct monoid_sum_t {
   static V op(V a, V b) { return a + b; }
 };
 static_assert(monoid_c<monoid_sum_t<>>);
+
+/** ----------------------------- PERSISTENT SEGMENT TREE TYPE ALIASES ----------------------------- **/
 
 using persistent_segtree_t = persistent_segment_tree_t<monoid_sum_t<>>;

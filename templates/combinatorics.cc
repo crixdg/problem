@@ -1,14 +1,14 @@
 /**
  *    author: crixdg
- *    timestamp: 26.03.2026 17:25:56
+ *    timestamp: 28.03.2026 06:25:36
  **/
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-/** combinatorics class for small values **/
-// clang-format off
+/** ----------------------------- COMBINATORICS (SMALL VALUES) ----------------------------- **/
+
 class combinatorics_small_t {
 public:
   combinatorics_small_t() {}
@@ -29,7 +29,8 @@ public:
 
   long long C(int n, int k) {
     if (k < 0 || k > n) { return 0; }
-    extend(n); return c_[n][k];
+    extend(n);
+    return c_[n][k];
   }
 
 private:
@@ -38,4 +39,3 @@ private:
 };
 
 using comb_t = combinatorics_small_t;
-// clang-format on

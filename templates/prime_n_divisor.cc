@@ -1,3 +1,8 @@
+/**
+ *    author: crixdg
+ *    timestamp: 28.03.2026 06:26:09
+ **/
+
 #include <bits/stdc++.h>
 
 using namespace std;
