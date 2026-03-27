@@ -55,7 +55,7 @@ public:
   template <integer_c U> modular_t(const U &u) : value_(normalize(u)) {}
 
   static T mod() { return *M_; }
-  T operator()() const { return value_; }
+  T value() const { return value_; }
 
   template <integer_c U> explicit operator U() const { return static_cast<U>(value_); }
   friend string to_string(const modular_t &m) { return to_string(m.value_); }
