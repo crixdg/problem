@@ -76,25 +76,22 @@ int main() {
   int n, q;
   cin >> n >> q;
   vector<vector<int>> qs(q);
-  vector<vector<int>> g(n);
+  vector<vector<int>> g(q);
   for (int i = 0; i < q; i++) {
     int op, k, u, v;
     cin >> op >> k >> u >> v;
-    if (op == 0) {
-      qs[i] = {op, u, v};
+    if (k >= 0) {
       g[k].push_back(i);
-    } else {
-      qs[k] = {op, u, v};
     }
+    qs[i] = {op, k, u, v};
   }
 
   dsu_rollback_t dsu(n);
   {
-    vector<bool> vs(n);
+    vector<bool> vs(q);
     function<void(int)> dfs = [&](int u) {
-      if (vs[u]) { return; }
-
       int now = dsu.save();
+      debug(qs[u]);
       if (qs[u][0] == 0) {
         dsu.unite(qs[u][2], qs[u][3]);
       } else {
@@ -109,7 +106,7 @@ int main() {
       dsu.rollback(now);
     };
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < q; i++) {
       if (!vs[i]) {
         vs[i] = true;
         dfs(i);
@@ -117,7 +114,7 @@ int main() {
     }
 
     for (int i = 0; i < q; i++) {
-      if (qs[i].size() == 4) { cout << qs[i][3] << '\n'; }
+      if (qs[i].size() == 5) { cout << qs[i][4] << '\n'; }
     }
   }
   return 0;
