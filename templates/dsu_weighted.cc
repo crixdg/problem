@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// ------------------------ WEIGHTED DISJOINT SET UNION ------------------------
+/** ----------------------------- WEIGHTED DISJOINT SET UNION ----------------------------- **/
 
 template <typename Op>
 concept weighted_dsu_op_c = requires { typename Op::W; } &&
@@ -78,7 +78,7 @@ struct weighted_dsu_t {
   int components() { return comp_sz; }
 };
 
-// ------------------------- WEIGHTED DSU OPERATIONS ---------------------------
+/** ----------------------------- WEIGHTED DSU OPERATIONS ----------------------------- **/
 
 /**
  * * LABEL(x) - LABEL(y) = d
@@ -124,6 +124,6 @@ struct dsu_weight_op_3 {
 };
 static_assert(weighted_dsu_op_c<dsu_weight_op_3<long long, (long long)1e9 + 7>>);
 
-/** -------------------------------------------------------------- **/
+/** ----------------------------- WEIGHTED DSU TYPE ALIAS ----------------------------- **/
 
 using w_dsu_t = weighted_dsu_t<dsu_weight_op_1<long long>>;

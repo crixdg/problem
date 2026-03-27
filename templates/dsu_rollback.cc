@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// ----------------------------- DSU ROLLBACK -----------------------------
+/** ----------------------------- DSU ROLLBACK ----------------------------- **/
 
 struct dsu_rollback_t {
   int comps;

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// ----------------------------- DISJOINT SET UNION -----------------------------
+/** ----------------------------- DISJOINT SET UNION ----------------------------- **/
 
 struct dsu_t {
   int comp_sz;

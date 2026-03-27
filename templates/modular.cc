@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// --------------------- MODULAR ARITHMETIC --------------------------
+/** ----------------------------- MODULAR ARITHMETIC ----------------------------- **/
 
 template <typename T>
 concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
@@ -125,6 +125,8 @@ private:
   static T div(__int128_t a, __int128_t b) { T inv = mod_inverse<T>(b, *M_); assert(inv != T(-1)); return mul(a, inv); }
 };
 // clang-format on
+
+/** ----------------------------- MODULAR TYPE ALIAS ----------------------------- **/
 
 using mod_t = int;
 mod_t md = 1e9 + 7;

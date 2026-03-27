@@ -4,6 +4,8 @@
 
 using namespace std;
 
+/** ----------------------------- WEIGHTED DISJOINT SET UNION ----------------------------- **/
+
 template <typename Op>
 concept weighted_dsu_op_c = requires { typename Op::W; } &&
                             requires(typename Op::W, typename Op::W a, typename Op::W b, typename Op::W d) {
@@ -73,32 +75,38 @@ struct weighted_dsu_t {
   int components() { return comp_sz; }
 };
 
-/** -------------------------------------------------------------- **/
+/** ----------------------------- WEIGHTED DSU OPERATIONS ----------------------------- **/
 
-/** label(x) - label(y) = d (additive abelian) */
+/**
+ * * LABEL(x) - LABEL(y) = d
+ **/
 template <class T = long long>
-struct dsu_weight_op_additive {
+struct dsu_weight_op_1 {
   using W = T;
   static W e() { return W(0); }
   static W join(W a, W b) { return a + b; }
   static W diff(W a, W b) { return a - b; }
   static W flip(W d) { return -d; }
 };
-static_assert(weighted_dsu_op_c<dsu_weight_op_additive<long long>>);
+static_assert(weighted_dsu_op_c<dsu_weight_op_1<long long>>);
 
-/** label(x) xor label(y) = d */
-struct dsu_weight_op_xor {
+/**
+ * * LABEL(x) ^ LABEL(y) = d
+ **/
+struct dsu_weight_op_2 {
   using W = long long;
   static W e() { return W(0); }
   static W join(W a, W b) { return a ^ b; }
   static W diff(W a, W b) { return a ^ b; }
   static W flip(W d) { return d; }
 };
-static_assert(weighted_dsu_op_c<dsu_weight_op_xor>);
+static_assert(weighted_dsu_op_c<dsu_weight_op_2>);
 
-/** lable(x) - label(y) = d (modulo m) */
+/**
+ * * LABEL(x) - LABEL(y) = d (mod m)
+ **/
 template <class T = long long, T M_ = T(1e9 + 7)>
-struct dsu_weight_op_modulo {
+struct dsu_weight_op_3 {
   using W = T;
   static W e() { return W(0); }
   static W join(W a, W b) { return (a + b) % M_; }
@@ -111,11 +119,13 @@ struct dsu_weight_op_modulo {
     return (ans < 0 ? ans + M_ : ans);
   }
 };
-static_assert(weighted_dsu_op_c<dsu_weight_op_modulo<long long, (long long)1e9 + 7>>);
+static_assert(weighted_dsu_op_c<dsu_weight_op_3<long long, (long long)1e9 + 7>>);
 
-/** -------------------------------------------------------------- **/
+/** ----------------------------- WEIGHTED DSU TYPE ALIAS ----------------------------- **/
 
-using w_dsu_t = weighted_dsu_t<dsu_weight_op_modulo<long long, 998244353>>;
+using w_dsu_t = weighted_dsu_t<dsu_weight_op_3<long long, 998244353>>;
+
+/** --------------------------------- MAIN --------------------------------- **/
 
 #ifdef LOCAL
 #include "debug.h"
