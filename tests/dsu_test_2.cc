@@ -9,11 +9,9 @@ struct dsu_t {
   int comp_sz;
   vector<int> p, sz;
 
-  dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) {
-    iota(p.begin(), p.end(), 0);
-  }
+  explicit dsu_t(int n) : comp_sz(n), p(n), sz(n, 1) { iota(p.begin(), p.end(), 0); }
 
-  /** find root; path halving compression **/
+  /** find root: path halving compression **/
   int find(int x) {
     while (p[x] != x) {
       p[x] = p[p[x]];
@@ -22,11 +20,11 @@ struct dsu_t {
     return x;
   }
 
-  /** merge; false if already same set **/
+  /** merge: false if already same set **/
   bool unite(int a, int b) {
     a = find(a), b = find(b);
     if (a == b) { return false; }
-    if (sz[a] < sz[b]) { std::swap(a, b); }
+    if (sz[a] < sz[b]) { swap(a, b); }
     p[b] = a;
     sz[a] += sz[b];
     comp_sz--;
