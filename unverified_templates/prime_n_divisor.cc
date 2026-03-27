@@ -1,11 +1,8 @@
-/**
- *    author: crixdg
- *    modified: 26.03.2026 12:31:10
- *    created: 25.03.2026 22:08:43
- **/
 #include <bits/stdc++.h>
 
 using namespace std;
+
+/** ----------------------------- PRIME NUMBER AND DIVISOR ----------------------------- **/
 
 template <typename T>
 concept integer_c = same_as<T, int> || same_as<T, long> || same_as<T, long long>;
@@ -60,7 +57,6 @@ bool is_prime(T n) {
 }
 
 /** prime_base_t **/
-// clang-format off
 template <integer_c T, T MAX_N_>
 class prime_base_t {
 public:
@@ -131,8 +127,11 @@ public:
   ll prod_of_divisors(T n) const {
     int d = no_of_divisors(n);
     __int128_t a = n;
-    if (d & 1) { a = sqrtl(a); }
-    else { d >>= 1; }
+    if (d & 1) {
+      a = sqrtl(a);
+    } else {
+      d >>= 1;
+    }
 
     ll ans = 1;
     while (d > 0) {
@@ -158,4 +157,3 @@ private:
 };
 
 using prime_base = prime_base_t<int, int(1e7)>;
-// clang-format on
