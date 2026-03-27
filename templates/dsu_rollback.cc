@@ -1,13 +1,15 @@
 /**
  *    author: crixdg
- *    timestamp: 27.03.2026 02:54:43
+ *    timestamp: 27.03.2026 18:02:17
  **/
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
-struct persistent_dsu_t {
+// ----------------------------- DSU ROLLBACK -----------------------------
+
+struct dsu_rollback_t {
   int comps;
   vector<int> p, sz;
   struct change_t {
@@ -15,7 +17,7 @@ struct persistent_dsu_t {
   };
   vector<change_t> history;
 
-  explicit persistent_dsu_t(int n) : comps(n), p(n), sz(n, 1) {
+  explicit dsu_rollback_t(int n) : comps(n), p(n), sz(n, 1) {
     iota(p.begin(), p.end(), 0);
   }
 
