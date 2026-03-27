@@ -91,7 +91,6 @@ int main() {
     vector<bool> vs(q);
     function<void(int)> dfs = [&](int u) {
       int now = dsu.save();
-      debug(qs[u]);
       if (qs[u][0] == 0) {
         dsu.unite(qs[u][2], qs[u][3]);
       } else {
