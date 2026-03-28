@@ -1,8 +1,3 @@
-/**
- *    author: crixdg
- *    modified: 26.03.2026 00:15:13
- *    created: 26.03.2026 00:15:13
- **/
 #include <bits/stdc++.h>
 
 using namespace std;
